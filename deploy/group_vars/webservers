@@ -1,0 +1,8 @@
+---
+python_version: python3
+ansistrano_deploy_to: /mnt/persist/www/job_portal_wagtail
+database_name: job_portal_wagtail
+database_user: job_portal_wagtail
+project_slug: job_portal_wagtail
+domain_stage: stage.speedwingshr.com
+domain_prod: speedwingshr.com
