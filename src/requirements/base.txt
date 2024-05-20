@@ -8,3 +8,4 @@ wagtail==5.2.3
 wagtail-meta-preview==4.0.0
 wagtail_headless_preview==0.7.0
 whitenoise==6.6.0
+django-storages[s3]

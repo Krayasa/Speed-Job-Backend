@@ -206,3 +206,47 @@ WAGTAIL_HEADLESS_PREVIEW = {
 # Sentry
 SENTRY_DSN: Optional[str] = None
 SENTRY_ENVIRONMENT: Optional[str] = None
+
+if get_env("AWS_STORAGE_BUCKET_NAME"):
+    # Add django-storages to the installed apps
+    INSTALLED_APPS = INSTALLED_APPS + ["storages"]
+
+    # https://docs.djangoproject.com/en/stable/ref/settings/#default-file-storage
+    
+    STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": get_env("AWS_ACCESS_KEY_ID"),
+            "secret_key": get_env("AWS_SECRET_ACCESS_KEY"),
+            "bucket_name": get_env("AWS_STORAGE_BUCKET_NAME"),
+            "region_name": get_env("AWS_LOCATION"),
+            "custom_domain": get_env("AWS_S3_CUSTOM_DOMAIN"),
+  
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "access_key": get_env("AWS_ACCESS_KEY_ID"),
+            "secret_key": get_env("AWS_SECRET_ACCESS_KEY"),
+            "bucket_name": get_env("AWS_STORAGE_BUCKET_NAME"),
+            "region_name": get_env("AWS_LOCATION"),
+            "custom_domain": get_env("AWS_S3_CUSTOM_DOMAIN"),
+        },
+    },
+}
+
+    # Disables signing of the S3 objects' URLs. When set to True it
+    # will append authorization querystring to each URL.
+    AWS_QUERYSTRING_AUTH = False
+
+    # Do not allow overriding files on S3 as per Wagtail docs recommendation:
+    # https://docs.wagtail.io/en/stable/advanced_topics/deploying.html#cloud-storage
+    # Not having this setting may have consequences in losing files.
+    AWS_S3_FILE_OVERWRITE = False
+
+    # Default ACL for new files should be "private" - not accessible to the
+    # public. Images should be made available to public via the bucket policy,
+    # where the documents should use wagtail-storages.
+    AWS_DEFAULT_ACL = "private"
