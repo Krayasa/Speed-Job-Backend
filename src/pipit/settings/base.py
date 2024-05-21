@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from typing import Optional
 
@@ -29,9 +30,11 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.flatpages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
     "django.contrib.gis",
+    'django.contrib.sites',
     # Third party apps
     "wagtail.embeds",
     "wagtail.sites",
@@ -51,6 +54,14 @@ INSTALLED_APPS = [
     "wagtail_meta_preview",
     "wagtail_headless_preview",
     "rest_framework",
+    'rest_framework_simplejwt',
+    "drf_yasg",
+    "corsheaders",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt.token_blacklist",
+    # "oauth2_provider",
+    # "social_django",
+    # "rest_framework_social_oauth2",
     # Project specific apps
     "pipit",
     "sitesettings",
@@ -59,6 +70,8 @@ INSTALLED_APPS = [
     "customdocument",
     "main",
     "nextjs",
+    "tags",
+    "jobs",
 ]
 
 MIDDLEWARE = [
@@ -117,6 +130,49 @@ DATABASES = {
         "PORT": int(get_env("DATABASE_PORT", default="5432")),
     }
 }
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # 'rest_framework.authentication.TokenAuthentication',
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
+}
+
+SIMPLE_JWT = {
+    "TOKEN_OBTAIN_SERIALIZER": "customuser.api.custom_clains.MyTokenObtainPairSerializer",
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+# Documentation
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {"Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}},
+    "DEFAULT_FIELD_INSPECTORS": [
+        "drf_yasg.inspectors.CamelCaseJSONFilter",
+        "drf_yasg.inspectors.InlineSerializerInspector",
+        "drf_yasg.inspectors.RelatedFieldInspector",
+        "drf_yasg.inspectors.ChoiceFieldInspector",
+        "drf_yasg.inspectors.FileFieldInspector",
+        "drf_yasg.inspectors.DictFieldInspector",
+        "drf_yasg.inspectors.SimpleFieldInspector",
+        "drf_yasg.inspectors.StringDefaultFieldInspector",
+    ],
+    "USE_SESSION_AUTH": False,
+}
+
+AUTHENTICATION_BACKENDS = (
+    # "social_core.backends.github.GithubOAuth2",
+    # "social_core.backends.twitter.TwitterOAuth",
+    # "social_core.backends.facebook.FacebookOAuth2",
+    # "social_core.backends.linkedin.LinkedinOAuth2",
+    # "social_core.backends.google.GoogleOAuth2",
+    # "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -202,6 +258,37 @@ WAGTAIL_HEADLESS_PREVIEW = {
         "default": "/api/preview/",
     }
 }
+
+# SOCIAL_AUTH_GITHUB_KEY = env("SOCIAL_AUTH_GITHUB_KEY", default="")
+# SOCIAL_AUTH_GITHUB_SECRET = env("SOCIAL_AUTH_GITHUB_SECRET", default="")
+
+# SOCIAL_AUTH_FACEBOOK_KEY = env("SOCIAL_AUTH_FACEBOOK_KEY", default="")
+# SOCIAL_AUTH_FACEBOOK_SECRET = env("SOCIAL_AUTH_FACEBOOK_SECRET", default="")
+
+# SOCIAL_AUTH_FACEBOOK_SCOPE = ["email"]
+# SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {"fields": "id, name, email, age_range"}
+
+# SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = env("SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY", default="")
+# SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = env("SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET", default="")
+
+# SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ["r_liteprofile", "r_emailaddress"]
+# SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = ["emailAddress"]
+
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", default="")
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", default="")
+
+# SOCIAL_AUTH_PIPELINE = (
+#     "social_core.pipeline.social_auth.social_details",
+#     "social_core.pipeline.social_auth.social_uid",
+#     "social_core.pipeline.social_auth.auth_allowed",
+#     "social_core.pipeline.social_auth.social_user",
+#     "social_core.pipeline.user.get_username",
+#     "social_core.pipeline.user.create_user",
+#     "social_core.pipeline.social_auth.associate_user",
+#     "social_core.pipeline.social_auth.load_extra_data",
+#     "social_core.pipeline.user.user_details",
+#     "accounts.pipeline.update_user",
+# )
 
 # Sentry
 SENTRY_DSN: Optional[str] = None

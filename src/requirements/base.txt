@@ -9,3 +9,15 @@ wagtail-meta-preview==4.0.0
 wagtail_headless_preview==0.7.0
 whitenoise==6.6.0
 django-storages[s3]
+djangorestframework-simplejwt
+drf-yasg
+django-cors-headers
+social-auth-app-django
+social-auth-core
+oauthlib
+django-oauth-toolkit
+requests
+requests-oauthlib
+django-rest-framework-social-oauth2
+
+

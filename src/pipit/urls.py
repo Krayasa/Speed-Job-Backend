@@ -13,12 +13,30 @@ from wagtail.documents import urls as wagtaildocs_urls
 from main.views.error_500 import error_500_view
 from main.views.page_not_found import PageNotFoundView
 from nextjs.api import api_router
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+
 
 handler404 = PageNotFoundView.as_view()
 handler500 = error_500_view
 
 URL = typing.Union[URLPattern, URLResolver]
 URLList = typing.List[URL]
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Jobs Portal API",
+        default_version="v1",
+        description="Jobs Portal Api Description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 
 urlpatterns: URLList = []
 
@@ -65,6 +83,18 @@ urlpatterns += [
     path("wt/documents/", include(wagtaildocs_urls)),
     path("wt/sitemap.xml", sitemap, name="sitemap"),
     path("wt/health-check/", health_check, name="health_check"),
+     path(
+        "wt/api/",
+        include(
+            [
+                path("swagger", schema_view.with_ui("swagger", cache_timeout=0)),
+                path("", include("customuser.api.urls")),
+                path("", include("jobs.api.urls")),
+                path("", include("tags.api.urls")),
+                # path('auth/oauth/', include('rest_framework_social_oauth2.urls'))
+            ]
+        ),
+    ),
 ]
 
 urlpatterns += [re_path(r"", include(wagtail_urls))]
