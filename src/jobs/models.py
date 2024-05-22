@@ -5,7 +5,8 @@ from wagtail.snippets.models import register_snippet
 
 
 from customuser.models import User
-from tags.models import Tag
+
+from taggit.managers import TaggableManager
 
 from .manager import JobManager
 
@@ -27,7 +28,7 @@ class Job(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     filled = models.BooleanField(default=False)
     salary = models.IntegerField(default=0, blank=True)
-    tags = models.ManyToManyField(Tag)
+    tags = TaggableManager()
     vacancy = models.IntegerField(default=1)
     
 

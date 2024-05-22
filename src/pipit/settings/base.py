@@ -70,7 +70,6 @@ INSTALLED_APPS = [
     "customdocument",
     "main",
     "nextjs",
-    "tags",
     "jobs",
 ]
 

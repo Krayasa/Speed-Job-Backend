@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from customuser.api.serializers import UserSerializer
-from tags.api.serializers import TagSerializer
+# from tags.api.serializers import TagSerializer
 
 from ..models import *
 
@@ -94,8 +94,8 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = "__all__"
 
-    def get_job_tags(self, obj):
-        return TagSerializer(obj.tags.all(), many=True).data
+    # def get_job_tags(self, obj):
+    #     return TagSerializer(obj.tags.all(), many=True).data
 
 
 class DashboardJobSerializer(serializers.ModelSerializer):
@@ -107,8 +107,8 @@ class DashboardJobSerializer(serializers.ModelSerializer):
         model = Job
         fields = "__all__"
 
-    def get_job_tags(self, obj):
-        return TagSerializer(obj.tags.all(), many=True).data
+    # def get_job_tags(self, obj):
+    #     return TagSerializer(obj.tags.all(), many=True).data
 
     def get_total_candidates(self, obj):
         return obj.applicants.count()
