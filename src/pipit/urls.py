@@ -87,7 +87,7 @@ urlpatterns += [
         "wt/api/",
         include(
             [
-                path("swagger", schema_view.with_ui("swagger", cache_timeout=0)),
+                path("swagger/", schema_view.with_ui("swagger", cache_timeout=0)),
                 path("", include("customuser.api.urls")),
                 path("", include("jobs.api.urls")),
                 path("", include("tags.api.urls")),
