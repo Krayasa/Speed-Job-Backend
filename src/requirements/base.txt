@@ -11,3 +11,5 @@ whitenoise==6.6.0
 django-storages[s3]
 pyjwt
 djangorestframework-simplejwt
+drf-yasg
+django-cors-headers

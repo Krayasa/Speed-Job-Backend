@@ -23,7 +23,7 @@ from wagtail.models import Page, PageViewRestriction, Site
 from wagtail.wagtail_hooks import require_wagtail_login
 from wagtail_headless_preview.models import PagePreview
 
-api_router = WagtailAPIRouter("nextjs")
+api_router = WagtailAPIRouter("wagtailapi")
 
 
 class PageRelativeUrlListSerializer(serializers.Serializer):

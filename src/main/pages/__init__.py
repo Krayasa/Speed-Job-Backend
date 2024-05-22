@@ -6,3 +6,4 @@ from .home import *  # NOQA
 from .home_serializer import *  # NOQA
 from .about import *  # NOQA
 from .about_serializer import *  # NOQA
+from .landing_pages import *  # NOQA
