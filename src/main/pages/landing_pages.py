@@ -13,6 +13,7 @@ from .base import BasePage
 class LandingPage(HeadlessPreviewMixin, BasePage):
     body = StreamField(section_blocks,use_json_field=True,)
 
+
     api_fields = [
         APIField("body"),
     ]
@@ -28,6 +29,7 @@ class LandingPage(HeadlessPreviewMixin, BasePage):
         # FieldPanel("intro"),
         FieldPanel("body", classname="full"),
     ]
+    serializer_class = "main.pages.landing_page_serializer.LandingPageSerializer"
     objects: PageManager
     class Meta:
         verbose_name = _("Business Landing Page")
