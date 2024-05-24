@@ -23,8 +23,8 @@ translate:
 migrate:
 	docker-compose exec python bash -c "python manage.py migrate --no-input"
 
-makemigrations:
-	docker-compose exec python bash -c "python manage.py makemigrations"
+migrations:
+	docker-compose exec python bash -c "python manage.py makemigrations customuser"
 
 user:
 	docker-compose exec python bash -c "python manage.py createsuperuser"
