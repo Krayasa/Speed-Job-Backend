@@ -31,7 +31,7 @@ setup_django () {
 
 case "$CMD" in
     "runserver" )
-        wait_for_db
+        # wait_for_db
         setup_django
 
         echo Starting using manage.py runserver
@@ -39,7 +39,7 @@ case "$CMD" in
         ;;
 
     "uwsgi" )
-        wait_for_db
+        # wait_for_db
         setup_django
 
 		pip install uwsgi
@@ -49,7 +49,7 @@ case "$CMD" in
         ;;
 
     "gunicorn" )
-        wait_for_db
+        # wait_for_db
         setup_django
 
         echo Starting using gunicorn
@@ -57,7 +57,7 @@ case "$CMD" in
         ;;
 
     "test" )
-        wait_for_db
+        # wait_for_db
 
         echo Running tests
         exec pytest --ds=pipit.settings.test
