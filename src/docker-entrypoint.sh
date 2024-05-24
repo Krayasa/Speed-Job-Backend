@@ -35,7 +35,7 @@ case "$CMD" in
         setup_django
 
         echo Starting using manage.py runserver
-        exec python manage.py runserver 0.0.0.0:8000
+        exec python manage.py runserver 0.0.0.0:8081
         ;;
 
     "uwsgi" )
