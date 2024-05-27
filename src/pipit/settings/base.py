@@ -225,8 +225,8 @@ WAGTAILIMAGES_FORMAT_CONVERSIONS = {
 }
 
 # Uploaded media
-MEDIA_URL = "/wt/media/"
-MEDIA_ROOT = get_env("MEDIA_PATH", required=True)
+# MEDIA_URL = "/wt/media/"
+# MEDIA_ROOT = get_env("MEDIA_PATH", required=True)
 
 
 # Static files (CSS, JavaScript, Images)
@@ -301,7 +301,7 @@ if get_env("AWS_STORAGE_BUCKET_NAME"):
     
     STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "access_key": get_env("AWS_ACCESS_KEY_ID"),
             "secret_key": get_env("AWS_SECRET_ACCESS_KEY"),
@@ -321,8 +321,12 @@ if get_env("AWS_STORAGE_BUCKET_NAME"):
             "custom_domain": get_env("AWS_S3_CUSTOM_DOMAIN"),
         },
     },
+    
 }
-
+    # print(get_env("AWS_STORAGE_BUCKET_NAME"), get_env("AWS_ACCESS_KEY_ID"), get_env("AWS_SECRET_ACCESS_KEY"), get_env("AWS_LOCATION"), get_env("AWS_S3_CUSTOM_DOMAIN"))
+    AWS_S3_CUSTOM_DOMAIN = get_env("AWS_S3_CUSTOM_DOMAIN")
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
     # Disables signing of the S3 objects' URLs. When set to True it
     # will append authorization querystring to each URL.
     AWS_QUERYSTRING_AUTH = False
