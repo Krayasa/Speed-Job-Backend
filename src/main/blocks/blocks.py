@@ -52,10 +52,10 @@ class HashBlock(FieldBlock):
 
 #@register_streamfield_block
 class ButtonBlock(StructBlock):
-    text = CharBlock(required=True, max_length=100, label="Text")
+    text = CharBlock(required=True, max_length=100, label="Text", default="Learn More")
     link = URLBlock(required=True, label="Link")
     btntype = ChoiceBlock(
-        required=True,
+        required=False,
         choices=[
             ("primary", "Primary"),
             ("secondary", "Secondary")

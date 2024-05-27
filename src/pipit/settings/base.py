@@ -130,14 +130,14 @@ DATABASES = {
     }
 }
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        # 'rest_framework.authentication.TokenAuthentication',
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
-}
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         # 'rest_framework.authentication.TokenAuthentication',
+#         "rest_framework_simplejwt.authentication.JWTAuthentication",
+#     ),
+#     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+#     "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
+# }
 
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "customuser.api.custom_clains.MyTokenObtainPairSerializer",

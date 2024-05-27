@@ -1,8 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from wagtail.snippets.models import register_snippet
-
-
+from wagtail.documents import get_document_model
 from customuser.managers import CustomUserManager
 
 GENDER_CHOICES = (("male", "Male"), ("female", "Female"))
@@ -19,6 +18,8 @@ class User(AbstractUser):
     email = models.EmailField(
         unique=True, blank=False, error_messages={"unique": "A user with that email already exists."}
     )
+    cv = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="cv")
+    passport = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="passport")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
