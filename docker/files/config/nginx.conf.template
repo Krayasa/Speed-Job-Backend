@@ -52,7 +52,7 @@ server {
     # }
 
     location / {
-        proxy_set_header Host $host:8081;
+        proxy_set_header Host $host:8083;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_pass http://host.docker.internal:3000;
@@ -66,14 +66,14 @@ server {
     }
 
     location /_util {
-        proxy_set_header Host $host:8081;
+        proxy_set_header Host $host:8083;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_pass ${PYTHON_HOST}:8000/_util;
     }
 
     location /wt {
-        proxy_set_header Host $host:8081;
+        proxy_set_header Host $host:8083;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_pass ${PYTHON_HOST}:8000/wt;

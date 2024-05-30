@@ -2,7 +2,6 @@ from django import forms
 from django.utils.encoding import force_str
 from django.utils.text import slugify
 from django.db import models
-from customimage.models import CustomImage
 
 from wagtail.blocks import (
     StructBlock,
@@ -16,80 +15,17 @@ from wagtail.blocks import (
 
 )
 from wagtail.images.blocks import ImageChooserBlock
-# from wagtail.images import get_image_model
 from wagtail.api import APIField
-# from customimage.serializers import CustomImageSerializer, get_image_serializer
-from wagtail.images.api.fields import ImageRenditionField
 
-
-# from grapple.helpers import register_streamfield_block
-# from grapple.models import GraphQLString, GraphQLStreamfield, GraphQLImage
-
-from rest_framework import serializers
-
-from main.pages.base import BasePage
-
-from rest_framework.fields import Field
-
-# class HeroSectionSerializer(serializers.Serializer):
-#     heading = serializers.CharField()
-#     description = serializers.CharField()
-#     image = serializers.SerializerMethodField()
-#     # button = ButtonBlockSerializer()  # Assuming you have a ButtonBlockSerializer defined
-#     hash = serializers.CharField()
-
-#     def get_image(self, obj):
-#         image = obj.get('image')
-#         if image:
-#             return image.get_rendition('fill-1920x1080').url
-#         return None
-
-# class ImageSerializedField(Field):
-#     print("ksadasdsad")
-#     """A custom serializer used in Wagtails v2 API."""
-
-#     def to_representation(self, value):
-#         """Return the image URL, title and dimensions."""
-#         return "Hello"
-        # return {
-        #     "url": value.file.url,
-        #     "title": value.title,
-        #     "width": value.width,
-        #     "height": value.height,
-        # }
-
-# class ImageSerializer(serializers.HyperlinkedModelSerializer):
-#     print("qwwqwqee")
-#     class Meta:
-#         model = CustomImage
-#         fields = ['title', 'file', 'width', 'height', 'file_size']
-
-# class APIImageChooserBlock(ImageChooserBlock):
-#     print("kdakdjaksldjklasdj")
-#     def get_api_representation(self, value, context=None):
-#         print("11111111111111111111111111")
-#         print(value)
-#         return "Hello"
-        # return ImageSerializer(context=context).to_representation(value)
-
-# class ImageSerializer(serializers.ModelSerializer):
-#     image = serializers.SerializerMethodField()
-    
-#     class Meta:
-#         model = BasePage
-#         fields = [
-#             "seo_og_image",
-#         ]
-
-#     def get_image(self, page):
-#         root_url = page.get_site().root_url
-#         image = page.image
-
-#         if not image:
-#             return None
-
-#         return f"{root_url}{image}"
-
+class APIImageChooserBlock(ImageChooserBlock):
+    def get_api_representation(self, value, context=None):
+        if value:
+            return {
+                'id': value.id,
+                'url': value.file.url,
+                'width': value.width,
+                'height': value.height,
+            }
 
 
 class HashBlock(FieldBlock):
@@ -121,7 +57,7 @@ class HashBlock(FieldBlock):
             return slugify("section-" + force_str(value), allow_unicode=False)
         return value
 
-#@register_streamfield_block
+
 class ButtonBlock(StructBlock):
     text = CharBlock(required=True, max_length=100, label="Text", default="Learn More")
     link = URLBlock(required=True, label="Link")
@@ -133,10 +69,7 @@ class ButtonBlock(StructBlock):
         ]
     )
 
-    api_fields = [APIField("text"), APIField("link"),APIField("btntype")]
-    
 
-#@register_streamfield_block
 class HeroSection(StructBlock):
     heading = TextBlock(
         required=False,
@@ -149,20 +82,7 @@ class HeroSection(StructBlock):
         label="Hero subtitle",
         default="The thing we do is take care of your human reosurces",
     )
-    image = ImageChooserBlock(required=False, label="Hero image")
-    # image = models.ForeignKey(
-    #     "customimage.CustomImage",
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.SET_NULL,
-    #     help_text=(
-    #         "If you want to override the image used on Facebook for \
-    #                 this item, upload an image here. \
-    #                 The recommended image size for Facebook is 1200 × 630px"
-    #     ),
-    #     related_name="+",
-    # )
-
+    image = APIImageChooserBlock(required=False, label="Hero image")
 
 
     button=ButtonBlock(required=False,label="CTA")
@@ -173,45 +93,25 @@ class HeroSection(StructBlock):
         help_text="Allow navigation to this section within a page. e.g. 'team' allows navigation to /http://your-site.com/#team",
     )
 
-    
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("image"),
-        # APIField("image_url", serializer=ImageRenditionField('fill-1920x1080', source='image')),
-        APIField("button"),
-        APIField("hash"),
-    ]
-    
-
     class Meta:
         icon = "placeholder"
         label = "Hero Section"
 
-#@register_streamfield_block
+
 class TeamMemberBlock(StructBlock):
     name = CharBlock(required=True, max_length=255, label="Name")
-    image = ImageChooserBlock(required=False, label="Photo")
+    image = APIImageChooserBlock(required=False, label="Photo")
     role = CharBlock(required=True, max_length=255, label="Role / Job Title")
     biography = TextBlock(required=False, label="Bio")
     linkedin = URLBlock(required=False, label="LinkedIn Page")
     twitter = URLBlock(required=False, label="Twitter Page")
 
-    api_fields = [
-        APIField("name"),
-        APIField("image"),
-        APIField("role"),
-        APIField("biography"),
-        APIField("linkedin"),
-        APIField("twitter"),
-
-    ]
 
     class Meta:
         icon = "user"
         label = "Team Member"
 
-#@register_streamfield_block
+
 class TeamSection(StructBlock):
     heading = TextBlock(
         required=False,
@@ -231,20 +131,14 @@ class TeamSection(StructBlock):
         help_text="Allow navigation to this section within a page. e.g. 'team' allows navigation to /http://your-site.com/#team",
     )
 
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("members"),
-        APIField("hash"),
-    ]
 
     class Meta:
         icon = "group"
         label = "Team Section"
 
-#@register_streamfield_block
+
 class CarouselImageBlock(StructBlock):
-    image = ImageChooserBlock()
+    image = APIImageChooserBlock()
     heading = TextBlock(
             required=False,
             label="Main text",
@@ -257,16 +151,11 @@ class CarouselImageBlock(StructBlock):
             help_text="Add some descriptive information with your image",
         )
 
-    api_fields = [
-        APIField("image"),
-        APIField("description"),
-        APIField("heading"),
-        ]
     class Meta:
         icon = "image"
         label = "Carousel Image"
 
-#@register_streamfield_block
+
 class CarouselSection(StructBlock):
     heading = TextBlock(
             required=False,
@@ -285,18 +174,12 @@ class CarouselSection(StructBlock):
         label="Hash",
         help_text="Allow navigation to this section within a page. e.g. 'team' allows navigation to /http://your-site.com/#team",
     )
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("images"),
-        APIField("hash"),
-    ]
 
     class Meta:
         icon = "image"
         label = "Carousel Section"
 
-#@register_streamfield_block
+
 class FaqBlock(StructBlock):
     question = TextBlock(
         required=True,
@@ -313,16 +196,12 @@ class FaqBlock(StructBlock):
         label="Button",
         help_text="Add a link to be followed for more information on that question, feature or product",
     )
-    api_fields = [
-        APIField("question"),
-        APIField("answer"),
-        APIField("button"),
-    ]
+
     class Meta:
         icon = "help"
         label = "FAQ"
 
-#@register_streamfield_block
+
 class FaqSection(StructBlock):
     heading =TextBlock(
             required=False,
@@ -338,18 +217,11 @@ class FaqSection(StructBlock):
     )
     faqs = ListBlock(FaqBlock(), label="FAQs")
 
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("faqs"),
-        APIField("hash"),
-    ]
     class Meta:
         icon = "help"
         label = "FAQs Section"
 
 
-#@register_streamfield_block
 class TestimonialBlock(StructBlock):
     name = CharBlock(
         required=True,
@@ -373,7 +245,7 @@ class TestimonialBlock(StructBlock):
         label="Quote",
         help_text="The nice things they have to say",
     )
-    image = ImageChooserBlock(
+    image = APIImageChooserBlock(
         required=False,
         label="Logo/Picture",
         help_text="Add either a company logo or a person's mugshot",
@@ -392,21 +264,12 @@ class TestimonialBlock(StructBlock):
         icon="pick",
     )
 
-    api_fields = [
-        APIField("name"),
-        APIField("role"),
-        APIField("organisation"),
-        APIField("quote"),
-        APIField("stars"),
-        APIField("image"),
-    ]
-
     class Meta:
         icon = "pick"
         label = "Testimonial"
 
 
-#@register_streamfield_block
+
 class TestimonialSection(StructBlock):
     heading = TextBlock(
         required=False,
@@ -427,20 +290,12 @@ class TestimonialSection(StructBlock):
     )
     testimonials = ListBlock(TestimonialBlock())
 
-
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("hash"),
-        APIField("testimonials"),
-    ]
-
     class Meta:
         icon = "pick"
         label = "Testimonials Section"
 
 
-#@register_streamfield_block
+
 class FeatureBlock(StructBlock):
     heading = TextBlock(
         required=True,
@@ -452,22 +307,15 @@ class FeatureBlock(StructBlock):
         label="Description",
         help_text="Write a few lines about this feature",
     )
-    image=ImageChooserBlock(required=False)
+    image=APIImageChooserBlock(required=False)
     button=ButtonBlock(required=False)
-
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("image"),
-        APIField("button"),
-    ]
 
     class Meta:
         icon = "tick-inverse"
         label = "Product Feature Description"
 
 
-#@register_streamfield_block
+
 class FeatureRowSection(StructBlock):
     heading =TextBlock(
             required=False,
@@ -485,7 +333,7 @@ class FeatureRowSection(StructBlock):
         label="Long Description",
         help_text="This is the paragraph where you can write more details about your product. Keep it meaningful!",
     )
-    image = ImageChooserBlock(
+    image = APIImageChooserBlock(
         required=False,
         label="Image",
         help_text="Pick an image for the side panel of a feature list",
@@ -498,22 +346,11 @@ class FeatureRowSection(StructBlock):
         help_text="Allow navigation to this section within a page. e.g. 'team' allows navigation to /http://your-site.com/#team",
     )
 
-
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("longdescription"),
-        APIField("image"),
-        APIField("hash"),
-        APIField("features"),
-    ]
-
-
     class Meta:
         icon = "list-ul"
         label = "Brand Features Row Section"
 
-#@register_streamfield_block
+
 class FeatureSection(StructBlock):
     heading =TextBlock(
             required=False,
@@ -521,17 +358,7 @@ class FeatureSection(StructBlock):
             default="Why our product is best",
             help_text="Add a heading at the beginning of this page section",
         )
-    # description = TextBlock(
-    #     required=False,
-    #     label="Description",
-    #     help_text="This is the paragraph where you can write more details about your product. Keep it meaningful!",
-    # )
 
-    # image = ImageChooserBlock(
-    #     required=False,
-    #     label="Image",
-    #     help_text="Pick an image for the side panel of a feature list",
-    # )
     features = ListBlock(FeatureBlock(), label="Features")
     hash = HashBlock(
         required=False,
@@ -540,22 +367,12 @@ class FeatureSection(StructBlock):
         help_text="Allow navigation to this section within a page. e.g. 'team' allows navigation to /http://your-site.com/#team",
     )
 
-
-    api_fields = [
-        APIField("heading"),
-        # APIField("description"),
-        # APIField("image"),
-        APIField("hash"),
-        APIField("features"),
-    ]
-
-
     class Meta:
         icon = "list-ul"
         label = "Brand Features Section"
 
 
-#@register_streamfield_block
+
 class LogoCloudBlock(StructBlock):
     country = TextBlock(
         required=False,
@@ -564,23 +381,18 @@ class LogoCloudBlock(StructBlock):
         help_text="Add a country name",
     )
 
-    image = ImageChooserBlock(
+    image = APIImageChooserBlock(
         required=False,
         label="Image",
         help_text="Pick an image for the country logo",
     )
-
-    api_fields = [
-        APIField("country"),
-        APIField("image"),
-    ]
 
     class Meta:
         icon = "list-ul"
         label = "Logos"
 
 
-#@register_streamfield_block
+
 class LogoCloudSection(StructBlock):
     description = TextBlock(
         required=False,
@@ -591,19 +403,14 @@ class LogoCloudSection(StructBlock):
 
     countries = ListBlock(LogoCloudBlock(), label = "Countries")
 
-    api_fields = [
-        APIField("description"),
-        APIField("countries"),
-    ]
-
     class Meta:
         icon = "pick"
         label = "Logo Section"
 
 
-#@register_streamfield_block
+
 class ArticleBlock(StructBlock):
-    image = ImageChooserBlock(
+    image = APIImageChooserBlock(
         required=False,
         label="Image",
         help_text="Pick an image for blog",
@@ -632,19 +439,13 @@ class ArticleBlock(StructBlock):
         help_text="Add a description",
     )
 
-    api_fields = [
-        APIField("image"),
-        APIField("category"),
-        APIField("heading"),
-        APIField("description"),
-    ]
 
     class Meta:
         icon = "list-ul"
         label = "Article Block"
 
 
-#@register_streamfield_block
+
 class ArticleSection(StructBlock):
     heading = TextBlock(
         required=False,
@@ -662,18 +463,12 @@ class ArticleSection(StructBlock):
 
     articles = ListBlock(ArticleBlock(), label = "Articles")
 
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("articles"),
-    ]
-
     class Meta:
         icon = "pick"
         label = "Article Section"
 
 
-#@register_streamfield_block
+
 class ContactSection(StructBlock):
     heading =TextBlock(
             required=False,
@@ -708,24 +503,12 @@ class ContactSection(StructBlock):
     )
     button=ButtonBlock(required=False)
 
-
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("location1"),
-        APIField("location2"),
-        APIField("phone"),
-        APIField("email"),
-        APIField("button"),
-    ]
-
-
     class Meta:
         icon = "user"
         label = "Contact Section"
 
 
-#@register_streamfield_block
+
 class JobFormSection(StructBlock):
     heading =TextBlock(
             required=False,
@@ -740,14 +523,6 @@ class JobFormSection(StructBlock):
     )
 
     button = ButtonBlock(required=True)
-
-
-    api_fields = [
-        APIField("heading"),
-        APIField("description"),
-        APIField("button"),
-    ]
-
 
     class Meta:
         icon = "user"

@@ -10,7 +10,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG ENVIRONMENT=prod
 
 RUN apt-get update && apt-get install --no-install-recommends -y python3.11 python3.11-dev libpq-dev python3.11-venv python3-pip python3-wheel build-essential && \
-	apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # create and activate virtual environment
 # using final folder name to avoid path issues with packages
@@ -38,7 +38,7 @@ RUN mkdir /home/app/web /home/app/static
 WORKDIR /home/app/web
 COPY . .
 
-EXPOSE 8081
+EXPOSE 8083
 
 # make sure all messages always reach console
 ENV PYTHONUNBUFFERED=1

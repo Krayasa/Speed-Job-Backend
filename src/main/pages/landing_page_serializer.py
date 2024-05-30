@@ -7,13 +7,10 @@ from .base_serializer import BasePageSerializer
 
 
 class LandingPageSerializer(BasePageSerializer):
-    # body = serializers.SerializerMethodField()
-    # hero_section = HeroSectionSerializer()
-
 
     class Meta:
         model = LandingPage
-        fields = BasePageSerializer.Meta.fields + ["body", "feed_image"]
+        fields = BasePageSerializer.Meta.fields + ["body"]
 
     def get_rich_text(self, page):
         return expand_db_html(page.rich_text)

@@ -4,7 +4,7 @@ services:
     # image: nginx:latest
     # working_dir: /app
     # ports:
-    #   - "8081:80"
+    #   - "8083:80"
     #   - "8082:443"
     # depends_on:
     #   - python
@@ -26,7 +26,7 @@ services:
         - ENVIRONMENT=local
     command: "runserver"
     ports:
-      - "8081:8081"
+      - "8083:8083"
     volumes:
       - "./src:/home/app/web"
       - "./src/media:/home/app/media"

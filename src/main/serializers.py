@@ -40,13 +40,14 @@ class SeoSerializer(serializers.ModelSerializer):
         ]
 
     def get_seo_og_image(self, page):
+        print(self, page)
         root_url = page.get_site().root_url
         image = page.seo_og_image
         
         if not image:
             return None
 
-        return f"{root_url}{image}"
+        return f"{image}"
 
     def get_seo_twitter_image(self, page):
         root_url = page.get_site().root_url

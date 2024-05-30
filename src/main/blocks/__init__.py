@@ -13,7 +13,7 @@ section_blocks = [
     ("testimonial_section", TestimonialSection()),
     ("logo_cloud_section", LogoCloudSection()),
     ("article_section", ArticleSection()),
-    ("feature_row_section", FeatureRowSection()), 
     ("contact_section", ContactSection()), 
+    ("feature_row_section", FeatureRowSection()), 
     ("job_form_section", JobFormSection())
 ]
