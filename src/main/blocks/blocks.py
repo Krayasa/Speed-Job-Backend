@@ -1,6 +1,8 @@
 from django import forms
 from django.utils.encoding import force_str
 from django.utils.text import slugify
+from django.db import models
+from customimage.models import CustomImage
 
 from wagtail.blocks import (
     StructBlock,
@@ -14,11 +16,80 @@ from wagtail.blocks import (
 
 )
 from wagtail.images.blocks import ImageChooserBlock
+# from wagtail.images import get_image_model
 from wagtail.api import APIField
+# from customimage.serializers import CustomImageSerializer, get_image_serializer
 from wagtail.images.api.fields import ImageRenditionField
+
 
 # from grapple.helpers import register_streamfield_block
 # from grapple.models import GraphQLString, GraphQLStreamfield, GraphQLImage
+
+from rest_framework import serializers
+
+from main.pages.base import BasePage
+
+from rest_framework.fields import Field
+
+# class HeroSectionSerializer(serializers.Serializer):
+#     heading = serializers.CharField()
+#     description = serializers.CharField()
+#     image = serializers.SerializerMethodField()
+#     # button = ButtonBlockSerializer()  # Assuming you have a ButtonBlockSerializer defined
+#     hash = serializers.CharField()
+
+#     def get_image(self, obj):
+#         image = obj.get('image')
+#         if image:
+#             return image.get_rendition('fill-1920x1080').url
+#         return None
+
+# class ImageSerializedField(Field):
+#     print("ksadasdsad")
+#     """A custom serializer used in Wagtails v2 API."""
+
+#     def to_representation(self, value):
+#         """Return the image URL, title and dimensions."""
+#         return "Hello"
+        # return {
+        #     "url": value.file.url,
+        #     "title": value.title,
+        #     "width": value.width,
+        #     "height": value.height,
+        # }
+
+# class ImageSerializer(serializers.HyperlinkedModelSerializer):
+#     print("qwwqwqee")
+#     class Meta:
+#         model = CustomImage
+#         fields = ['title', 'file', 'width', 'height', 'file_size']
+
+# class APIImageChooserBlock(ImageChooserBlock):
+#     print("kdakdjaksldjklasdj")
+#     def get_api_representation(self, value, context=None):
+#         print("11111111111111111111111111")
+#         print(value)
+#         return "Hello"
+        # return ImageSerializer(context=context).to_representation(value)
+
+# class ImageSerializer(serializers.ModelSerializer):
+#     image = serializers.SerializerMethodField()
+    
+#     class Meta:
+#         model = BasePage
+#         fields = [
+#             "seo_og_image",
+#         ]
+
+#     def get_image(self, page):
+#         root_url = page.get_site().root_url
+#         image = page.image
+
+#         if not image:
+#             return None
+
+#         return f"{root_url}{image}"
+
 
 
 class HashBlock(FieldBlock):
@@ -63,6 +134,7 @@ class ButtonBlock(StructBlock):
     )
 
     api_fields = [APIField("text"), APIField("link"),APIField("btntype")]
+    
 
 #@register_streamfield_block
 class HeroSection(StructBlock):
@@ -78,6 +150,21 @@ class HeroSection(StructBlock):
         default="The thing we do is take care of your human reosurces",
     )
     image = ImageChooserBlock(required=False, label="Hero image")
+    # image = models.ForeignKey(
+    #     "customimage.CustomImage",
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.SET_NULL,
+    #     help_text=(
+    #         "If you want to override the image used on Facebook for \
+    #                 this item, upload an image here. \
+    #                 The recommended image size for Facebook is 1200 × 630px"
+    #     ),
+    #     related_name="+",
+    # )
+
+
+
     button=ButtonBlock(required=False,label="CTA")
     hash = HashBlock(
         required=False,
@@ -86,13 +173,16 @@ class HeroSection(StructBlock):
         help_text="Allow navigation to this section within a page. e.g. 'team' allows navigation to /http://your-site.com/#team",
     )
 
+    
     api_fields = [
         APIField("heading"),
         APIField("description"),
         APIField("image"),
+        # APIField("image_url", serializer=ImageRenditionField('fill-1920x1080', source='image')),
         APIField("button"),
         APIField("hash"),
     ]
+    
 
     class Meta:
         icon = "placeholder"

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "django.contrib.gis",
     'django.contrib.sites',
+    "dashboard",
     # Third party apps
     "wagtail.embeds",
     "wagtail.sites",
@@ -43,8 +44,8 @@ INSTALLED_APPS = [
     "wagtail.documents",
     "wagtail.images",
     "wagtail.admin",
-    "wagtail.search",
     "wagtail",
+    "wagtail.search",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.contrib.routable_page",

@@ -12,6 +12,7 @@ class CustomImageSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     focal = serializers.SerializerMethodField()
 
+
     _mocked_id: int
     _mocked_url: str
     _mocked_renditions: List
@@ -42,6 +43,15 @@ class CustomImageSerializer(serializers.ModelSerializer):
             renditions[name] = rendition.attrs_dict
 
         return renditions
+    
+    def get_image_url(self, page):
+        root_url = page.get_site().root_url
+        image = page.url
+
+        if not image:
+            return None
+
+        return f"{root_url}{image}"
 
     def get_focal(self, obj):
         # Default focal point values

@@ -14,7 +14,7 @@ ROLE_CHOICES = (
 @register_snippet
 class User(AbstractUser):
     role = models.CharField(choices=ROLE_CHOICES,error_messages={"required": "Role must be provided"})
-    gender = models.CharField(max_length=10, blank=True, null=True, default="")
+    gender = models.CharField(choices=GENDER_CHOICES,max_length=10, blank=True, null=True, default="")
     email = models.EmailField(
         unique=True, blank=False, error_messages={"unique": "A user with that email already exists."}
     )
