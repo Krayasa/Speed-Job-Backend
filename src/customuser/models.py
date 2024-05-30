@@ -13,6 +13,7 @@ ROLE_CHOICES = (
 
 @register_snippet
 class User(AbstractUser):
+    username = None
     role = models.CharField(choices=ROLE_CHOICES,error_messages={"required": "Role must be provided"})
     gender = models.CharField(choices=GENDER_CHOICES,max_length=10, blank=True, null=True, default="")
     email = models.EmailField(
