@@ -4,7 +4,7 @@ from wagtail.snippets.models import register_snippet
 from wagtail.documents import get_document_model
 from customuser.managers import CustomUserManager
 
-GENDER_CHOICES = (("male", "Male"), ("female", "Female"))
+# GENDER_CHOICES = (("male", "Male"), ("female", "Female"))
 ROLE_CHOICES = (
     ("employer", "employer"),
     ("employee", "employee"),
@@ -15,7 +15,7 @@ ROLE_CHOICES = (
 class User(AbstractUser):
     username = None
     role = models.CharField(choices=ROLE_CHOICES,error_messages={"required": "Role must be provided"})
-    gender = models.CharField(choices=GENDER_CHOICES,max_length=10, blank=True, null=True, default="")
+    # gender = models.CharField(choices=GENDER_CHOICES,max_length=10, blank=True, null=True, default="")
     email = models.EmailField(
         unique=True, blank=False, error_messages={"unique": "A user with that email already exists."}
     )

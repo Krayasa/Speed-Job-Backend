@@ -20,20 +20,19 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["email", "password", "password2", "gender", "role"]
+        fields = ["email", "password", "password2", "role"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         email = validated_data["email"]
         password = validated_data["password"]
         password2 = validated_data["password2"]
-        gender = validated_data["gender"]
         role = validated_data["role"]
         if email and User.objects.filter(email=email).exists():
             raise serializers.ValidationError({"email": "Email addresses must be unique."})
         if password != password2:
             raise serializers.ValidationError({"password": "The two passwords differ."})
-        user = User(email=email, gender=gender, role=role)
+        user = User(email=email, role=role)
         user.set_password(password)
         user.save()
         return user
