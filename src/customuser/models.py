@@ -11,7 +11,6 @@ ROLE_CHOICES = (
 )
 
 
-@register_snippet
 class User(AbstractUser):
     username = None
     role = models.CharField(choices=ROLE_CHOICES,error_messages={"required": "Role must be provided"})

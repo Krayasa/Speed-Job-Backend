@@ -13,7 +13,6 @@ from .manager import JobManager
 JOB_TYPE = (("FullTime", "Full time"), ("PartTime", "Part time"), ("Contract", "Contract"))
 
 
-@register_snippet
 class Job(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=300)
@@ -43,7 +42,6 @@ class Job(models.Model):
     def __str__(self):
         return self.title
 
-@register_snippet
 class Applicant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="applicants")
@@ -67,7 +65,6 @@ class Applicant(models.Model):
         else:
             return "Rejected"
 
-@register_snippet
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="favorites")

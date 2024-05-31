@@ -60,7 +60,7 @@ class HashBlock(FieldBlock):
 
 class ButtonBlock(StructBlock):
     text = CharBlock(required=True, max_length=100, label="Text", default="Learn More")
-    link = URLBlock(required=True, label="Link")
+    link = URLBlock(required=True, label="Link", default="www.speedwingshr.com")
     btntype = ChoiceBlock(
         required=False,
         choices=[
