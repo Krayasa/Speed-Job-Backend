@@ -13,3 +13,9 @@ pyjwt
 djangorestframework-simplejwt
 drf-yasg
 django-cors-headers
+django-queryset-csv
+drf_social_oauth2==2.2.0
+social
+django-oauth-toolkit
+splinter
+

@@ -20,7 +20,7 @@ DEBUG = False
 # This is when debug is off, else django wont allow you to visit the site
 ALLOWED_HOSTS = get_env("ALLOWED_HOSTS", required=True).split(",")
 
-INTERNAL_IPS = ["127.0.0.1"]
+# INTERNAL_IPS = ["127.0.0.1"]
 
 
 # Application definition
@@ -60,9 +60,10 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
-    # "oauth2_provider",
-    # "social_django",
-    # "rest_framework_social_oauth2",
+    'oauth2_provider',
+    # 'social_django',
+    'drf_social_oauth2',
+
     # Project specific apps
     "pipit",
     "sitesettings",
@@ -74,9 +75,17 @@ INSTALLED_APPS = [
     "jobs",
 ]
 
+# CORS_ALLOWED_ORIGINS = [ "*",
+#     # 'http://localhost:3000',
+#     # 'http://127.0.0.1:3000',
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -107,12 +116,16 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "wagtail.contrib.settings.context_processors.settings",
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 # Project specific
                 "pipit.context_processors.settings_context_processor",
             ],
         },
     }
 ]
+
+
 
 WSGI_APPLICATION = "pipit.wsgi.application"
 
@@ -139,6 +152,13 @@ DATABASES = {
 #     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 #     "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
 # }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+        'drf_social_oauth2.authentication.SocialAuthentication',
+    ),
+}
 
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "customuser.api.custom_clains.MyTokenObtainPairSerializer",
@@ -171,7 +191,10 @@ AUTHENTICATION_BACKENDS = (
     # "social_core.backends.linkedin.LinkedinOAuth2",
     # "social_core.backends.google.GoogleOAuth2",
     # "graphql_jwt.backends.JSONWebTokenBackend",
+    'social.backends.linkedin.LinkedinOAuth2',
     "django.contrib.auth.backends.ModelBackend",
+    'drf_social_oauth2.backends.DjangoOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 # Default primary key field type
