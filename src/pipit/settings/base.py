@@ -60,9 +60,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
-    'oauth2_provider',
-    # 'social_django',
-    'drf_social_oauth2',
+
 
     # Project specific apps
     "pipit",
@@ -116,8 +114,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "wagtail.contrib.settings.context_processors.settings",
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
+
                 # Project specific
                 "pipit.context_processors.settings_context_processor",
             ],
@@ -153,12 +150,7 @@ DATABASES = {
 #     "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
 # }
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
-        'drf_social_oauth2.authentication.SocialAuthentication',
-    ),
-}
+
 
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "customuser.api.custom_clains.MyTokenObtainPairSerializer",
@@ -191,9 +183,7 @@ AUTHENTICATION_BACKENDS = (
     # "social_core.backends.linkedin.LinkedinOAuth2",
     # "social_core.backends.google.GoogleOAuth2",
     # "graphql_jwt.backends.JSONWebTokenBackend",
-    'social.backends.linkedin.LinkedinOAuth2',
-    "django.contrib.auth.backends.ModelBackend",
-    'drf_social_oauth2.backends.DjangoOAuth2',
+
     'django.contrib.auth.backends.ModelBackend',
 )
 
