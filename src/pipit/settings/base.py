@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
-    'social_django',
+    # 'social_django',
 
     # Project specific apps
     "pipit",

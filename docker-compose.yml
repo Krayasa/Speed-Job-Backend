@@ -4,7 +4,7 @@ services:
     # image: nginx:latest
     # working_dir: /app
     # ports:
-    #   - "8083:80"
+    #   - "8081:80"
     #   - "8082:443"
     # depends_on:
     #   - python
@@ -26,7 +26,7 @@ services:
         - ENVIRONMENT=local
     command: "runserver"
     ports:
-      - "8083:8083"
+      - "8081:8081"
     volumes:
       - "./src:/home/app/web"
       - "./src/media:/home/app/media"
@@ -38,7 +38,7 @@ services:
   # db:
   #   image: postgis/postgis:12-2.5-alpine
   #   ports:
-  #     - "8083:5432"
+  #     - "8081:5432"
   #   volumes:
   #     - "./docker/files/db-dumps/:/docker-entrypoint-initdb.d/"
   #     - "./docker/files/shared:/shared:rw"

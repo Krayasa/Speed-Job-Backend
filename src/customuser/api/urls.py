@@ -10,6 +10,6 @@ urlpatterns = [
     path("login/", MyTokenObtainPairView.as_view()),
     path("token/refresh/", TokenRefreshView.as_view()),
     path("employee/", include([path("profile/", EditEmployeeProfileAPIView.as_view(), name="employee-profile")])),
-    path('oauth/', include('social_django.urls', namespace='social'))
+    # path('oauth/', include('social_django.urls', namespace='social'))
     # path("oauth/login/", SocialLoginAPIView.as_view()),
 ]

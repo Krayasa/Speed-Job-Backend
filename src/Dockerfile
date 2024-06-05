@@ -38,7 +38,7 @@ RUN mkdir /home/app/web /home/app/static
 WORKDIR /home/app/web
 COPY . .
 
-EXPOSE 8083
+EXPOSE 8081
 
 # make sure all messages always reach console
 ENV PYTHONUNBUFFERED=1
