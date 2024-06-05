@@ -188,7 +188,7 @@ AUTHENTICATION_BACKENDS = (
     # "social_core.backends.linkedin.LinkedinOAuth2",
     # "social_core.backends.google.GoogleOAuth2",
     # "graphql_jwt.backends.JSONWebTokenBackend",
-    'social_core.backends.google.GoogleOAuth2',
+    # 'social_core.backends.google.GoogleOAuth2',
 
     'django.contrib.auth.backends.ModelBackend',
 )
