@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
-
+    'social_django',
 
     # Project specific apps
     "pipit",
@@ -77,6 +77,11 @@ INSTALLED_APPS = [
 #     # 'http://localhost:3000',
 #     # 'http://127.0.0.1:3000',
 # ]
+
+#Social Auth
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -141,14 +146,14 @@ DATABASES = {
     }
 }
 
-# REST_FRAMEWORK = {
-#     "DEFAULT_AUTHENTICATION_CLASSES": (
-#         # 'rest_framework.authentication.TokenAuthentication',
-#         "rest_framework_simplejwt.authentication.JWTAuthentication",
-#     ),
-#     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-#     "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
-# }
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # 'rest_framework.authentication.TokenAuthentication',
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
+}
 
 
 
@@ -183,6 +188,7 @@ AUTHENTICATION_BACKENDS = (
     # "social_core.backends.linkedin.LinkedinOAuth2",
     # "social_core.backends.google.GoogleOAuth2",
     # "graphql_jwt.backends.JSONWebTokenBackend",
+    'social_core.backends.google.GoogleOAuth2',
 
     'django.contrib.auth.backends.ModelBackend',
 )

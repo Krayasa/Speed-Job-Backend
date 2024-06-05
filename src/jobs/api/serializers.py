@@ -88,7 +88,7 @@ from ..models import *
 
 class JobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    job_tags = serializers.SerializerMethodField()
+    # job_tags = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
