@@ -37,3 +37,26 @@ class User(AbstractUser):
         return self.email
 
     objects = CustomUserManager()
+    
+class EmployerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=255, blank=True, null=True)
+    company_address = models.CharField(max_length=255, blank=True, null=True)
+    company_phone = models.CharField(max_length=255, blank=True, null=True)
+    company_website = models.URLField(max_length=255, blank=True, null=True)
+    number_of_employees = models.IntegerField(blank=True, null=True)
+    company_description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.company_name
+
+class EmployeeProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=255, blank=True, null=True)
+    website = models.URLField(max_length=255, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.company_name

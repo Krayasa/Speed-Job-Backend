@@ -2,7 +2,7 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from wagtail.snippets.models import register_snippet
 from wagtail import hooks
-from customuser.models import User
+from customuser.models import EmployeeProfile, EmployerProfile, User
 from jobs.models import *
 from wagtail.snippets.views.snippets import SnippetViewSet
 # from wagtail.admin.helpers import ButtonHelper
@@ -41,8 +41,27 @@ class FavoriteViewSet(SnippetViewSet):
     menu_name = "favorites"
     menu_order = 300
     add_to_admin_menu = True
+    
+    
+class EmployerProfileViewSet(SnippetViewSet):
+    model = EmployerProfile
+    icon = "user"
+    menu_label = "Employer Profiles"
+    menu_name = "Employer Profiles"
+    menu_order = 300
+    add_to_admin_menu = True
+    
+class EmployeeProfileViewSet(SnippetViewSet):
+    model = EmployeeProfile
+    icon = "user"
+    menu_label = "Employee Profiles"
+    menu_name = "Employee Profiles"
+    menu_order = 300
+    add_to_admin_menu = True
 
 register_snippet(UserViewSet)
+register_snippet(EmployerProfileViewSet)
+register_snippet(EmployeeProfileViewSet)
 register_snippet(JobViewSet)
 register_snippet(ApplicantViewSet)
 register_snippet(FavoriteViewSet)
