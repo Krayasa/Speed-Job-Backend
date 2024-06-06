@@ -18,17 +18,7 @@ class User(AbstractUser):
     email = models.EmailField(
         unique=True, blank=False, error_messages={"unique": "A user with that email already exists."}
     )
-    resume = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="resume")
-    experience_letter = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="experience_letter")
-    police_report = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="police_report")
-    medical_report = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="medical_report")
-    offer_letter = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="offer_letter")
-    work_permit = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="work_permit")
-    project_agreement = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="project_agreement")
-    employment_requirement_agreement = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="employment_requirement_agreement")
-    visa = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="visa")
-    ticket = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="ticket")
-
+   
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
@@ -55,8 +45,18 @@ class EmployeeProfile(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=255, blank=True, null=True)
-    website = models.URLField(max_length=255, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
+    resume = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="resume")
+    experience_letter = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="experience_letter")
+    police_report = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="police_report")
+    medical_report = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="medical_report")
+    offer_letter = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="offer_letter")
+    work_permit = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="work_permit")
+    project_agreement = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="project_agreement")
+    employment_requirement_agreement = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="employment_requirement_agreement")
+    visa = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="visa")
+    ticket = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="ticket")
+
 
     def __str__(self):
         return self.company_name
