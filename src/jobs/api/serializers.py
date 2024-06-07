@@ -100,7 +100,7 @@ class JobSerializer(serializers.ModelSerializer):
 
 class DashboardJobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    job_tags = serializers.SerializerMethodField()
+    # job_tags = serializers.SerializerMethodField()
     total_candidates = serializers.SerializerMethodField()
 
     class Meta:

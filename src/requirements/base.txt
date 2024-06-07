@@ -14,5 +14,4 @@ djangorestframework-simplejwt
 drf-yasg
 django-cors-headers
 django-queryset-csv
-social-auth-app-django
-
+django-allauth[socialaccount]
