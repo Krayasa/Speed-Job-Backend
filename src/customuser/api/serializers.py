@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from customuser.models import User
+from customuser.models import User, EmployeeProfile, EmployerProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,6 +12,19 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         # fields = "__all__"
         exclude = ("password", "user_permissions", "groups", "is_staff", "is_active", "is_superuser", "last_login")
+        
+class EmployeeProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = EmployeeProfile
+        fields = ["user","name", "phone", "address", "resume", "experience_letter", "police_report", "medical_report", "offer_letter", "work_permit", "project_agreement", "employment_requirement_agreement", "visa", "ticket", "bio"]
+        
+class EmployerProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = EmployerProfile
+        fields = "__all__"
+
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -45,3 +58,4 @@ class SocialSerializer(serializers.Serializer):
 
     provider = serializers.CharField(max_length=255, required=True)
     access_token = serializers.CharField(max_length=4096, required=True, trim_whitespace=True)
+    

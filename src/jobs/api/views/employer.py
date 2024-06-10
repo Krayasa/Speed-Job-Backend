@@ -1,11 +1,11 @@
 from django.http import JsonResponse
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from jobs.api.permissions import IsEmployer, IsJobCreator
 from jobs.api.serializers import ApplicantSerializer, DashboardJobSerializer, NewJobSerializer
-from jobs.models import Applicant
+from jobs.models import Applicant, Job
 
 
 class DashboardAPIView(ListAPIView):
@@ -20,6 +20,14 @@ class JobCreateAPIView(CreateAPIView):
     serializer_class = NewJobSerializer
     permission_classes = [IsAuthenticated, IsEmployer]
 
+class JobUpdateAPIView(UpdateAPIView):
+        serializer_class = NewJobSerializer
+        permission_classes = [IsAuthenticated, IsEmployer]
+        lookup_url_kwarg = "job_id"
+
+        def get_queryset(self):
+            user = self.request.user
+            return Job.objects.filter(user_id=user.id)
 
 class ApplicantsListAPIView(ListAPIView):
     serializer_class = ApplicantSerializer

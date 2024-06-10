@@ -1,18 +1,19 @@
 from django.contrib.auth import get_user_model, login
 from requests.exceptions import HTTPError
 from rest_framework import decorators, permissions, response, status
-from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from customuser.models import EmployeeProfile, EmployerProfile
 from rest_framework_simplejwt.tokens import RefreshToken
 # from social_core.backends.oauth import BaseOAuth2
 # from social_core.exceptions import AuthForbidden, AuthTokenError, MissingBackend
 # from social_django.utils import load_backend, load_strategy
 
-from jobs.api.permissions import IsEmployee
+from jobs.api.permissions import IsEmployee, IsEmployer
 
 from .custom_claims import MyTokenObtainPairSerializer
-from .serializers import SocialSerializer, UserCreateSerializer, UserSerializer
+from .serializers import SocialSerializer, UserCreateSerializer, UserSerializer, EmployeeProfileSerializer, EmployerProfileSerializer
 
 User = get_user_model()
 
@@ -29,13 +30,33 @@ def registration(request):
     return response.Response(res, status.HTTP_201_CREATED)
 
 
-class EditEmployeeProfileAPIView(RetrieveUpdateAPIView):
-    serializer_class = UserSerializer
-    http_method_names = ["get", "put"]
+class EditEmployeeProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
+    serializer_class = EmployeeProfileSerializer
+    http_method_names = ["get", "put", "post"]
     permission_classes = [IsAuthenticated, IsEmployee]
 
     def get_object(self):
-        return self.request.user
+        try:
+            return self.request.user.employee_profile
+        except EmployeeProfile.DoesNotExist:
+            return None
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class EditEmployerProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
+    serializer_class = EmployerProfileSerializer
+    http_method_names = ["get", "put", "post"]
+    permission_classes = [IsAuthenticated, IsEmployer]
+
+    def get_object(self):
+        try:
+            return self.request.user.employer_profile
+        except EmployerProfile.DoesNotExist:
+            return None
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 # class SocialLoginAPIView(GenericAPIView):
