@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from customuser.models import EmployeeProfile, EmployerProfile
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.parsers import MultiPartParser
 # from social_core.backends.oauth import BaseOAuth2
 # from social_core.exceptions import AuthForbidden, AuthTokenError, MissingBackend
 # from social_django.utils import load_backend, load_strategy
@@ -34,6 +35,7 @@ class EditEmployeeProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
     serializer_class = EmployeeProfileSerializer
     http_method_names = ["get", "put", "post"]
     permission_classes = [IsAuthenticated, IsEmployee]
+    parser_classes = [MultiPartParser]
 
     def get_object(self):
         try:
@@ -48,6 +50,7 @@ class EditEmployerProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
     serializer_class = EmployerProfileSerializer
     http_method_names = ["get", "put", "post"]
     permission_classes = [IsAuthenticated, IsEmployer]
+    parser_classes = [MultiPartParser]
 
     def get_object(self):
         try:
