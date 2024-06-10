@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from customuser.models import User, EmployeeProfile, EmployerProfile
 
-
 class UserSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         kwargs["partial"] = True
@@ -15,12 +14,33 @@ class UserSerializer(serializers.ModelSerializer):
         
 class EmployeeProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(default=serializers.CurrentUserDefault())
+    resume = serializers.FileField(use_url=True)
+    experience_letter = serializers.FileField(use_url=True)
+    police_report = serializers.FileField(use_url=True)
+    medical_report = serializers.FileField(use_url=True)
+    offer_letter = serializers.FileField(use_url=True)
+    work_permit = serializers.FileField(use_url=True)
+    project_agreement = serializers.FileField(use_url=True)
+    employment_requirement_agreement = serializers.FileField(use_url=True)
+    visa = serializers.FileField(use_url=True)
+    ticket = serializers.FileField(use_url=True)
+    
     class Meta:
         model = EmployeeProfile
-        fields = ["user","name", "phone", "address", "resume", "experience_letter", "police_report", "medical_report", "offer_letter", "work_permit", "project_agreement", "employment_requirement_agreement", "visa", "ticket", "bio"]
+        fields = "__all__"
         
 class EmployerProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(default=serializers.CurrentUserDefault())
+    resume = serializers.FileField(use_url=True)
+    experience_letter = serializers.FileField(use_url=True)
+    police_report = serializers.FileField(use_url=True)
+    medical_report = serializers.FileField(use_url=True)
+    offer_letter = serializers.FileField(use_url=True)
+    work_permit = serializers.FileField(use_url=True)
+    project_agreement = serializers.FileField(use_url=True)
+    employment_requirement_agreement = serializers.FileField(use_url=True)
+    visa = serializers.FileField(use_url=True)
+    ticket = serializers.FileField(use_url=True)
     class Meta:
         model = EmployerProfile
         fields = "__all__"
