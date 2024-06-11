@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     # 'allauth.socialaccount.providers.linkedin',
     # 'allauth.socialaccount.providers.linkedin_oauth2',
-    # 'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.google',
 
     # Project specific apps
     "pipit",
@@ -217,6 +217,22 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"  # NOQA
     },
 ]
+
+SITE_ID = 1  # new
+
+ACCOUNT_EMAIL_VERIFICATION = "none"  # new
+
+# LOGIN_REDIRECT_URL = "/"  # new
+
+# new below
+SOCIALACCOUNT_PROVIDERS = {
+    "linkedIn": {
+        "APP": {
+            "client_id": "123",
+            "secret": "456",
+        }
+    }
+}
 
 
 # Internationalization

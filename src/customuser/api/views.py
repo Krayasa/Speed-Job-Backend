@@ -45,6 +45,12 @@ class EditEmployeeProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+    
+    def get_parsers(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return []
+
+        return super().get_parsers()
 
 class EditEmployerProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
     serializer_class = EmployerProfileSerializer
@@ -60,6 +66,12 @@ class EditEmployerProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+        
+    def get_parsers(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return []
+    
+        return super().get_parsers()
 
 
 # class SocialLoginAPIView(GenericAPIView):

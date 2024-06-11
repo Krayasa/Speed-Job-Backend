@@ -6,14 +6,24 @@ class UserSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         kwargs["partial"] = True
         super(UserSerializer, self).__init__(*args, **kwargs)
+    
+
 
     class Meta:
         model = User
         # fields = "__all__"
         exclude = ("password", "user_permissions", "groups", "is_staff", "is_active", "is_superuser", "last_login")
         
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if not hasattr(instance, 'role'):  # Handle AnonymousUser
+            for field in ['id', 'first_name', 'last_name', 'role', 'email']:
+                representation.pop(field, None)
+        return representation
+    
+        
 class EmployeeProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(default=serializers.CurrentUserDefault())
+    user = UserSerializer()
     resume = serializers.FileField(use_url=True)
     experience_letter = serializers.FileField(use_url=True)
     police_report = serializers.FileField(use_url=True)
@@ -30,17 +40,8 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
 class EmployerProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(default=serializers.CurrentUserDefault())
-    resume = serializers.FileField(use_url=True)
-    experience_letter = serializers.FileField(use_url=True)
-    police_report = serializers.FileField(use_url=True)
-    medical_report = serializers.FileField(use_url=True)
-    offer_letter = serializers.FileField(use_url=True)
-    work_permit = serializers.FileField(use_url=True)
-    project_agreement = serializers.FileField(use_url=True)
-    employment_requirement_agreement = serializers.FileField(use_url=True)
-    visa = serializers.FileField(use_url=True)
-    ticket = serializers.FileField(use_url=True)
+    user = UserSerializer()
+
     class Meta:
         model = EmployerProfile
         fields = "__all__"
