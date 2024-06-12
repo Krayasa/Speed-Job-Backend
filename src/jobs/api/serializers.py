@@ -138,7 +138,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
         fields = ("id", "job", "applied_user", "status", "created_at", "comment")
 
     def get_status(self, obj):
-        return obj.get_status()
+        return obj.get_status
 
     def get_job(self, obj):
         return JobSerializer(obj.job).data
