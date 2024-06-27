@@ -2,6 +2,7 @@ from django import forms
 from django.utils.encoding import force_str
 from django.utils.text import slugify
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from wagtail.blocks import (
     StructBlock,
@@ -11,7 +12,8 @@ from wagtail.blocks import (
     URLBlock,
     ChoiceBlock,
     FieldBlock,
-    StreamBlock
+    StreamBlock,
+    PageChooserBlock,
 
 )
 from wagtail.images.blocks import ImageChooserBlock
@@ -60,7 +62,8 @@ class HashBlock(FieldBlock):
 
 class ButtonBlock(StructBlock):
     text = CharBlock(required=True, max_length=100, label="Text", default="Learn More")
-    link = URLBlock(required=True, label="Link", default="www.speedwingshr.com")
+    link = URLBlock(required=False, label="Link", default="www.speedwingshr.com")
+    page = PageChooserBlock(required=False)
     btntype = ChoiceBlock(
         required=False,
         choices=[
@@ -68,6 +71,18 @@ class ButtonBlock(StructBlock):
             ("secondary", "Secondary")
         ]
     )
+    def clean(self, value):
+        cleaned_data = super().clean(value)
+        link = cleaned_data.get('link')
+        page = cleaned_data.get('page')
+
+        if not link and not page:
+            raise ValidationError('Either "Link" or "Page" must be provided.')
+
+        return cleaned_data
+
+    class Meta:
+        icon = "placeholder"
 
 
 class HeroSection(StructBlock):
