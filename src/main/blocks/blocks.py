@@ -14,6 +14,7 @@ from wagtail.blocks import (
     FieldBlock,
     StreamBlock,
     PageChooserBlock,
+    RichTextBlock,
 
 )
 from wagtail.images.blocks import ImageChooserBlock
