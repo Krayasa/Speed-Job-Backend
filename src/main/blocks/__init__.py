@@ -1,4 +1,4 @@
-from .blocks import ArticleSection, CarouselSection, ContactSection, FeatureRowSection,FeatureSection,FaqSection,HeroSection, JobFormSection, LogoCloudSection,TeamSection,TestimonialSection  # noqa
+from .blocks import ArticleSection, CarouselSection, ContactSection, FeatureRowSection,FeatureSection,FaqSection,HeroSection, JobFormSection, LogoCloudSection,TeamSection,TestimonialSection, ArticleSection # noqa
 
 # noqa avoids "unused imports in __init__.py" error when using flake8
 
@@ -12,8 +12,8 @@ section_blocks = [
     ("team_section", TeamSection()),
     ("testimonial_section", TestimonialSection()),
     ("logo_cloud_section", LogoCloudSection()),
-    ("article_section", ArticleSection()),
     ("contact_section", ContactSection()), 
     ("feature_row_section", FeatureRowSection()), 
-    ("job_form_section", JobFormSection())
+    ("job_form_section", JobFormSection()),
+    ("article_section", ArticleSection()),
 ]

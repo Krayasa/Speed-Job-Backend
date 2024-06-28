@@ -543,4 +543,26 @@ class JobFormSection(StructBlock):
     class Meta:
         icon = "user"
         label = "Job Form Section"
+        
+class ArticleSection(StructBlock):
+    image = APIImageChooserBlock(
+        required=False,
+        label="Image",
+        help_text="Pick an image for blog",
+    )
+    title = TextBlock(
+        required=False,
+        label="Title",
+        default="Article Title",
+        help_text="Add an article title",
+    )
+    content = TextBlock(
+        required=False,
+        label="Content",
+        help_text="Write content for the article",
+    )
+
+    class Meta:
+        icon = "pick"
+        label = "Article Section"
 

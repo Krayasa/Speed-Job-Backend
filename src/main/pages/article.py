@@ -10,7 +10,7 @@ from main.blocks import section_blocks
 
 class ArticlePage(HeadlessPreviewMixin, BasePage):
     rich_text = RichTextField(blank=True, null=True, verbose_name=_("Rich text"))
-    content_section = StreamField(section_blocks,use_json_field=True,null=True, blank=True)
+    content_section = StreamField(section_blocks,use_json_field=True)
 
     content_panels = BasePage.content_panels + [FieldPanel("rich_text"),FieldPanel("content_section", classname="full"),]
 
