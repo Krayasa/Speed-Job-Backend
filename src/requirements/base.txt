@@ -15,3 +15,4 @@ drf-yasg
 django-cors-headers
 django-queryset-csv
 django-allauth[socialaccount]
+wagtail-markdown

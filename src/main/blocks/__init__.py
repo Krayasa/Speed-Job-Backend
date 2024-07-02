@@ -15,5 +15,5 @@ section_blocks = [
     ("contact_section", ContactSection()), 
     ("feature_row_section", FeatureRowSection()), 
     ("job_form_section", JobFormSection()),
-    ("article_section", ArticleSection()),
+    # ("article_section", ArticleSection()),
 ]
