@@ -10,12 +10,12 @@ from wagtailmarkdown.fields import MarkdownField
 
 
 class ArticlePage(HeadlessPreviewMixin, BasePage):
-    # rich_text = RichTextField(blank=True, null=True, verbose_name=_("Rich text"))
-    rich_text = MarkdownField(verbose_name=_("Content"), blank=True, null=True)
+    rich_text_1 = RichTextField(blank=True, null=True, verbose_name=_("Content"))
+    # rich_text = MarkdownField(verbose_name=_("Content"), blank=True, null=True)
     content_section = StreamField(section_blocks,use_json_field=True, blank=True, null=True, verbose_name=_("Content Sections"))
 
 
-    content_panels = BasePage.content_panels + [FieldPanel("rich_text"),FieldPanel("content_section", classname="full"),]
+    content_panels = BasePage.content_panels + [FieldPanel("rich_text_1"),FieldPanel("content_section", classname="full")]
 
     extra_panels = BasePage.extra_panels
     serializer_class = "main.pages.ArticlePageSerializer"
