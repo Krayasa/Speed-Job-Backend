@@ -20,6 +20,16 @@ from wagtail.blocks import (
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.api import APIField
 
+
+# class BaseStreamBlock(StreamBlock):
+#      """
+#      Define the custom blocks that `StreamField` will utilize
+#      """
+#      my_heading_block = CharBlock()
+#      my_paragraph_block = RichTextBlock()
+#      my_image_block = ImageChooserBlock()
+    #  my_table_block = TableBlock()
+
 class APIImageChooserBlock(ImageChooserBlock):
     def get_api_representation(self, value, context=None):
         if value:
@@ -28,6 +38,15 @@ class APIImageChooserBlock(ImageChooserBlock):
                 'url': value.file.url,
                 'width': value.width,
                 'height': value.height,
+            }
+            
+class APIPageChooserBlock(PageChooserBlock):
+    def get_api_representation(self, value, context=None):
+        if value:
+            return {
+                'id': value.id,
+                'title': value.title,
+                'url': value.url,
             }
 
 
@@ -64,7 +83,7 @@ class HashBlock(FieldBlock):
 class ButtonBlock(StructBlock):
     text = CharBlock(required=True, max_length=100, label="Text", default="Learn More")
     link = URLBlock(required=False, label="Link", default="www.speedwingshr.com")
-    page = PageChooserBlock(required=False)
+    page = APIPageChooserBlock(required=False)
     btntype = ChoiceBlock(
         required=False,
         choices=[

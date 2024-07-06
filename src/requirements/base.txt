@@ -16,3 +16,4 @@ django-cors-headers
 django-queryset-csv
 django-allauth[socialaccount]
 wagtail-markdown
+wagtail-content-import

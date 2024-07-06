@@ -6,7 +6,7 @@ from wagtail_headless_preview.models import HeadlessPreviewMixin
 
 from .base import BasePage
 from main.blocks import section_blocks
-from wagtailmarkdown.fields import MarkdownField
+# from wagtailmarkdown.fields import MarkdownField
 
 
 class ArticlePage(HeadlessPreviewMixin, BasePage):

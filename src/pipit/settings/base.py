@@ -35,8 +35,12 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "django.contrib.gis",
     'django.contrib.sites',
-    "dashboard",
     # Third party apps
+    'wagtail_content_import',
+    "wagtail_content_import.pickers.local",
+    'wagtail_content_import.pickers.microsoft',
+    'wagtail_content_import.pickers.google',
+    "dashboard",
     "wagtail.embeds",
     "wagtail.sites",
     "wagtail.users",

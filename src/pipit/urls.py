@@ -9,6 +9,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
+from wagtail_content_import import urls as wagtail_content_import_urls
 
 from main.views.error_500 import error_500_view
 from main.views.page_not_found import PageNotFoundView
@@ -76,6 +77,7 @@ def health_check(request):
 
 
 urlpatterns += [
+    path('wt/import/', include(wagtail_content_import_urls)),
     path("wt/sentry-debug/", trigger_error),
     path(settings.ADMIN_URL, admin.site.urls),
     path("wt/api/nextjs/v1/", api_router.urls),
@@ -83,7 +85,7 @@ urlpatterns += [
     path("wt/documents/", include(wagtaildocs_urls)),
     path("wt/sitemap.xml", sitemap, name="sitemap"),
     path("wt/health-check/", health_check, name="health_check"),
-     path(
+    path(
         "wt/api/",
         include(
             [

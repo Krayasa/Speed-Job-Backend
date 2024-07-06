@@ -7,4 +7,5 @@ class AboutPageSerializer(BasePageSerializer):
         model = AboutPage
         fields = [
             "company_name",
+            "body",
         ] + BasePageSerializer.Meta.fields

@@ -22,8 +22,10 @@ from wagtail.forms import PasswordViewRestrictionForm
 from wagtail.models import Page, PageViewRestriction, Site
 from wagtail.wagtail_hooks import require_wagtail_login
 from wagtail_headless_preview.models import PagePreview
+from wagtail.api.v2.serializers import PageSerializer
 
 api_router = WagtailAPIRouter("wagtailapi")
+
 
 
 class PageRelativeUrlListSerializer(serializers.Serializer):
@@ -177,8 +179,31 @@ class PageByPathAPIViewSet(BaseAPIViewSet):
                         }
                     )
 
-        return page.serve(request, *args, **kwargs)
+    #     return page.serve(request, *args, **kwargs)
+    
+        response_data = page.serve(request, *args, **kwargs).data
 
+        # Get child pages
+        child_pages = page.get_children().live().public()
+
+        child_pages_data = [
+            {
+                "id": child.id,
+                "title": child.title,
+                "slug": child.slug,
+                "seo_title": child.seo_title,
+                "url": child.relative_url(request._wagtail_site) if hasattr(request, '_wagtail_site') else child.url,
+                "seo_image": child.specific.seo_og_image
+            }
+            for child in child_pages
+        ]
+
+        # Add child pages data to response
+        response_data['child_pages'] = child_pages_data
+
+        return Response(response_data)
+    
+  
     def get_object(self):
         path = self.request.GET.get("html_path", None)
         if path is None:
