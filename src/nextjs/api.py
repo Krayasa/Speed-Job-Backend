@@ -200,6 +200,7 @@ class PageByPathAPIViewSet(BaseAPIViewSet):
 
         # Add child pages data to response
         response_data['child_pages'] = child_pages_data
+        response_data['slug'] = page.slug
 
         return Response(response_data)
     
