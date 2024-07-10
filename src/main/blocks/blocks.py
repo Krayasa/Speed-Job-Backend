@@ -443,44 +443,6 @@ class LogoCloudSection(StructBlock):
         label = "Logo Section"
 
 
-
-class ArticleBlock(StructBlock):
-    image = APIImageChooserBlock(
-        required=False,
-        label="Image",
-        help_text="Pick an image for blog",
-    )
-
-    category = ChoiceBlock(
-        required=True,
-        choices=[
-            ("construction", "Construction"),
-            ("manpower", "Manpower"),
-        ],
-        icon="pick",
-    )
-    
-    heading = TextBlock(
-        required=False,
-        label="Title",
-        default="Manpower",
-        help_text="Add a title",
-    )
-
-    description = TextBlock(
-        required=False,
-        label="Description",
-        default="Manpower",
-        help_text="Add a description",
-    )
-
-
-    class Meta:
-        icon = "list-ul"
-        label = "Article Block"
-
-
-
 class ArticleSection(StructBlock):
     heading = TextBlock(
         required=False,
@@ -495,8 +457,6 @@ class ArticleSection(StructBlock):
         default="Learn how to grow your business with our expert advice",
         help_text="Add a description",
     )
-
-    articles = ListBlock(ArticleBlock(), label = "Articles")
 
     class Meta:
         icon = "pick"
@@ -563,27 +523,4 @@ class JobFormSection(StructBlock):
         icon = "user"
         label = "Job Form Section"
         
-# class ArticleSection(StructBlock):
-    # image = APIImageChooserBlock(
-    #     required=False,
-    #     label="Image",
-    #     help_text="Pick an image for blog",
-    # )
-    # title = TextBlock(
-    #     required=False,
-    #     label="Title",
-    #     default="Article Title",
-    #     help_text="Add an article title",
-    # )
-    # content = TextBlock(
-    #     required=False,
-    #     label="Content",
-    #     help_text="Write content for the article",
-    # )
-    
-    # article = RichTextBlock(required=True, label="Article", help_text="Write content for the article")
-
-    # class Meta:
-    #     icon = "pick"
-    #     label = "Article Section"
 

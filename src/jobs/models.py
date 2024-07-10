@@ -4,8 +4,6 @@ from django.utils import timezone
 from wagtail.snippets.models import register_snippet
 from wagtail.documents import get_document_model
 
-
-
 from customuser.models import User
 
 from taggit.managers import TaggableManager

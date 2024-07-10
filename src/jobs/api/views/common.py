@@ -7,12 +7,21 @@ from rest_framework.views import APIView
 
 from ...models import Job
 from ..serializers import JobSerializer
+from rest_framework.pagination import PageNumberPagination
 
 
+
+class CustomPagination(PageNumberPagination):
+    page_size = 6  # Number of items per page
+    page_size_query_param = 'page_size'
+    max_page_size = 100  # Maximum page size
+    
+    
 class JobViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = JobSerializer
     queryset = serializer_class.Meta.model.objects.unfilled()
     permission_classes = [AllowAny]
+    pagination_class = CustomPagination
 
 
 class SearchApiView(ListAPIView):

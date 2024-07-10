@@ -15,6 +15,9 @@ from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from wagtail.api.v2.router import WagtailAPIRouter
+from wagtail.api.v2.views import PagesAPIViewSet
+from wagtail.images.api.v2.views import ImagesAPIViewSet
+from wagtail.documents.api.v2.views import DocumentsAPIViewSet
 from wagtail.api.v2.views import BaseAPIViewSet, PagesAPIViewSet
 from wagtail.contrib.redirects.middleware import get_redirect
 from wagtail.contrib.redirects.models import Redirect
@@ -22,10 +25,25 @@ from wagtail.forms import PasswordViewRestrictionForm
 from wagtail.models import Page, PageViewRestriction, Site
 from wagtail.wagtail_hooks import require_wagtail_login
 from wagtail_headless_preview.models import PagePreview
-from wagtail.api.v2.serializers import PageSerializer
+from jobs.api.views.common import CustomPagination
 
 api_router = WagtailAPIRouter("wagtailapi")
 
+api_router.register_endpoint('pages', PagesAPIViewSet)
+api_router.register_endpoint('images', ImagesAPIViewSet)
+api_router.register_endpoint('documents', DocumentsAPIViewSet)
+
+class CustomPageSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField() 
+    title = serializers.SerializerMethodField() 
+    slug = serializers.SerializerMethodField() 
+    seo_title = serializers.SerializerMethodField() 
+    url = serializers.SerializerMethodField() 
+    seo_image = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Page
+        fields = ["id", "title", "slug", "seo_title", "url", "seo_image"]
 
 
 class PageRelativeUrlListSerializer(serializers.Serializer):
@@ -144,6 +162,7 @@ api_router.register_endpoint("password_protected_page", PasswordProtectedPageVie
 class PageByPathAPIViewSet(BaseAPIViewSet):
     known_query_parameters = BaseAPIViewSet.known_query_parameters.union(["html_path"])
 
+
     def listing_view(self, request):
         page, args, kwargs = self.get_object()
 
@@ -179,30 +198,10 @@ class PageByPathAPIViewSet(BaseAPIViewSet):
                         }
                     )
 
-    #     return page.serve(request, *args, **kwargs)
-    
         response_data = page.serve(request, *args, **kwargs).data
-
-        # Get child pages
-        child_pages = page.get_children().live().public()
-
-        child_pages_data = [
-            {
-                "id": child.id,
-                "title": child.title,
-                "slug": child.slug,
-                "seo_title": child.seo_title,
-                "url": child.relative_url(request._wagtail_site) if hasattr(request, '_wagtail_site') else child.url,
-                "seo_image": child.specific.seo_og_image
-            }
-            for child in child_pages
-        ]
-
-        # Add child pages data to response
-        response_data['child_pages'] = child_pages_data
-        response_data['slug'] = page.slug
-
+        response_data["slug"] = page.slug
         return Response(response_data)
+
     
   
     def get_object(self):
@@ -348,3 +347,124 @@ class RedirectByPathAPIViewSet(BaseAPIViewSet):
 
 
 api_router.register_endpoint("redirect_by_path", RedirectByPathAPIViewSet)
+
+
+
+class ShowChildrenAPIViewSet(BaseAPIViewSet):
+    pagination_class = CustomPagination
+    model = Page
+    serializer_class = CustomPageSerializer
+    known_query_parameters = BaseAPIViewSet.known_query_parameters.union(["html_path"])
+
+    def listing_view(self, request):
+        page, args, kwargs = self.get_object()
+
+        if request.GET.get("host", None):
+            request._wagtail_site = self.get_external_site_from_request(request)
+
+        for restriction in page.get_view_restrictions():
+            if not restriction.accept_request(request):
+                if restriction.restriction_type == PageViewRestriction.PASSWORD:
+                    return Response(
+                        {
+                            "component_name": "PasswordProtectedPage",
+                            "component_props": {
+                                "restriction_id": restriction.id,
+                                "page_id": page.id,
+                                "csrf_token": csrf_middleware.get_token(request),
+                            },
+                        }
+                    )
+
+                elif restriction.restriction_type in [
+                    PageViewRestriction.LOGIN,
+                    PageViewRestriction.GROUPS,
+                ]:
+                    site = Site.find_for_request(self.request)
+                    resp = require_wagtail_login(next=page.relative_url(site, request))
+                    return Response(
+                        {
+                            "redirect": {
+                                "destination": resp.url,
+                                "is_permanent": False,
+                            }
+                        }
+                    )
+    
+        # Get child pages
+        child_pages = page.get_children().live().public()
+        # Paginate child pages
+        # paginator = CustomPagination()
+        # paginated_child_pages = paginator.paginate_queryset(child_pages, request)
+
+        child_pages_data = [
+            {
+                "id": child.id,
+                "title": child.title,
+                "slug": child.slug,
+                "seo_title": child.seo_title,
+                "url": child.relative_url(request._wagtail_site) if hasattr(request, '_wagtail_site') else child.url,
+                "seo_image": child.specific.seo_og_image
+            }
+            for child in child_pages
+        ]
+
+        return Response(child_pages_data)
+        # return paginator.get_paginated_response(child_pages_data)
+    
+  
+    def get_object(self):
+        path = self.request.GET.get("html_path", None)
+        if path is None:
+            raise ValidationError({"html_path": "Missing value"})
+
+        if not path.startswith("/"):
+            path = "/" + path
+
+        if self.request.GET.get("host", None):
+            self.request._wagtail_site = self.get_external_site_from_request(
+                self.request
+            )
+
+        site = Site.find_for_request(self.request)
+        if not site:
+            raise Http404
+
+        root_page = site.root_page
+
+        path_components = [component for component in path.split("/") if component]
+
+        if getattr(settings, "WAGTAIL_I18N_ENABLED", False):
+            language_from_path = translation.get_language_from_path(path)
+
+            if language_from_path:
+                path_components.remove(language_from_path)
+                translated_root_page = (
+                    root_page.get_translations(inclusive=True)
+                    .filter(locale__language_code=language_from_path)
+                    .first()
+                )
+                if not translated_root_page:
+                    raise Http404
+
+                root_page = translated_root_page
+
+        page, args, kwargs = root_page.specific.route(self.request, path_components)
+        return page, args, kwargs
+
+    @classmethod
+    def get_external_site_from_request(cls, request):
+        from wagtail.models.sites import get_site_for_hostname
+        from django.http.request import split_domain_port
+
+        host = request.GET.get("host")
+        hostname, port = split_domain_port(host)
+        return get_site_for_hostname(hostname, port)
+
+    @classmethod
+    def get_urlpatterns(cls):
+        return [
+            path("", cls.as_view({"get": "listing_view"}), name="listing"),
+        ]
+    
+api_router.register_endpoint("show_children", ShowChildrenAPIViewSet)

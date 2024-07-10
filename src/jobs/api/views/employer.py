@@ -6,11 +6,13 @@ from rest_framework.views import APIView
 from jobs.api.permissions import IsEmployer, IsJobCreator
 from jobs.api.serializers import ApplicantSerializer, DashboardJobSerializer, NewJobSerializer
 from jobs.models import Applicant, Job
+from .common import CustomPagination
 
 
 class DashboardAPIView(ListAPIView):
     serializer_class = DashboardJobSerializer
     permission_classes = [IsAuthenticated, IsEmployer]
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         return self.serializer_class.Meta.model.objects.filter(user_id=self.request.user.id)
@@ -32,6 +34,7 @@ class JobUpdateAPIView(UpdateAPIView):
 class ApplicantsListAPIView(ListAPIView):
     serializer_class = ApplicantSerializer
     permission_classes = [IsAuthenticated, IsEmployer]
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         user = self.request.user
@@ -41,6 +44,7 @@ class ApplicantsListAPIView(ListAPIView):
 class ApplicantsPerJobListAPIView(ListAPIView):
     serializer_class = ApplicantSerializer
     permission_classes = [IsAuthenticated, IsEmployer, IsJobCreator]
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         return Applicant.objects.filter(job_id=self.kwargs["job_id"]).order_by("id")

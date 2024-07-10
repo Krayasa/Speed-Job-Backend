@@ -8,6 +8,8 @@ from jobs.api.permissions import IsEmployee
 from jobs.api.serializers import ApplicantSerializer, AppliedJobSerializer, ApplyJobSerializer, JobSerializer
 from jobs.models import Applicant, Job
 
+from .common import CustomPagination
+
 
 class ApplyJobApiView(CreateAPIView):
     serializer_class = ApplyJobSerializer
@@ -27,7 +29,9 @@ class ApplyJobApiView(CreateAPIView):
 
 class AppliedJobsAPIView(ListAPIView):
     serializer_class = AppliedJobSerializer
-    permission_classes = [IsAuthenticated, IsEmployee]
+    permission_classes = [IsAuthenticated, IsEmployee]    
+    pagination_class = CustomPagination
+
 
     def get_queryset(self):
         applied_jobs_id = list(Applicant.objects.filter(user=self.request.user).values_list("job_id", flat=True))
