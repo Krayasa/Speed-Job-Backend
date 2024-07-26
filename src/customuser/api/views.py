@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from customuser.models import EmployeeProfile, EmployerProfile
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.parsers import MultiPartParser
+
 # from social_core.backends.oauth import BaseOAuth2
 # from social_core.exceptions import AuthForbidden, AuthTokenError, MissingBackend
 # from social_django.utils import load_backend, load_strategy
@@ -33,46 +34,53 @@ def registration(request):
 
 class EditEmployeeProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
     serializer_class = EmployeeProfileSerializer
-    http_method_names = ["get", "put", "post"]
     permission_classes = [IsAuthenticated, IsEmployee]
     parser_classes = [MultiPartParser]
 
     def get_object(self):
-        try:
-            return self.request.user.employee_profile
-        except EmployeeProfile.DoesNotExist:
-            return None
+        profile, created = EmployeeProfile.objects.get_or_create(user=self.request.user)
+        return profile
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-    
-    def get_parsers(self):
-        if getattr(self, 'swagger_fake_view', False):
-            return []
 
-        return super().get_parsers()
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+        
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+    
+
 
 class EditEmployerProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
     serializer_class = EmployerProfileSerializer
-    http_method_names = ["get", "put", "post"]
     permission_classes = [IsAuthenticated, IsEmployer]
-    parser_classes = [MultiPartParser]
 
     def get_object(self):
-        try:
-            return self.request.user.employer_profile
-        except EmployerProfile.DoesNotExist:
-            return None
+        profile, created = EmployerProfile.objects.get_or_create(user=self.request.user)
+        return profile
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-        
-    def get_parsers(self):
-        if getattr(self, 'swagger_fake_view', False):
-            return []
-    
-        return super().get_parsers()
 
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+        
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        print(serializer)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+        
 
 # class SocialLoginAPIView(GenericAPIView):
 #     """Log in using facebook"""

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from wagtail.documents import get_document_model
 
 from customuser.api.serializers import UserSerializer
 # from tags.api.serializers import TagSerializer
@@ -114,7 +115,8 @@ class DashboardJobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = "__all__"
+        fields = "__all__"        
+
 
     # def get_job_tags(self, obj):
     #     return TagSerializer(obj.tags.all(), many=True).data
@@ -124,11 +126,39 @@ class DashboardJobSerializer(serializers.ModelSerializer):
 
 
 class NewJobSerializer(serializers.ModelSerializer):
-    user = UserSerializer(default=serializers.CurrentUserDefault())
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    job_offer_letter = serializers.FileField(use_url=True, required=False, allow_null=True)
+    job_work_permit = serializers.FileField(use_url=True, required=False, allow_null=True)
+    job_project_agreement = serializers.FileField(use_url=True, required=False, allow_null=True)
+    job_employment_requirement_agreement = serializers.FileField(use_url=True, required=False, allow_null=True)
 
     class Meta:
         model = Job
         fields = "__all__"
+        
+    def create_or_update_document(self, validated_data, field_name):
+        if field_name in validated_data:
+            document_model = get_document_model()
+            document_instance = document_model.objects.create(file=validated_data[field_name])
+            validated_data[field_name] = document_instance
+
+    def update(self, instance, validated_data):
+        document_fields = [
+            'job_offer_letter', 'job_work_permit', 'job_project_agreement', 'job_employment_requirement_agreement'
+        ]
+        for field in document_fields:
+            self.create_or_update_document(validated_data, field)
+        
+        return super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        document_fields = [
+            'job_offer_letter', 'job_work_permit', 'job_project_agreement', 'job_employment_requirement_agreement'
+        ]
+        for field in document_fields:
+            self.create_or_update_document(validated_data, field)
+
+        return super().create(validated_data)
 
 
 class ApplyJobSerializer(serializers.ModelSerializer):

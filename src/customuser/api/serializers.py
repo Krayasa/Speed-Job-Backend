@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from wagtail.documents import get_document_model
+
 
 from customuser.models import User, EmployeeProfile, EmployerProfile
 
@@ -6,8 +8,6 @@ class UserSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         kwargs["partial"] = True
         super(UserSerializer, self).__init__(*args, **kwargs)
-    
-
 
     class Meta:
         model = User
@@ -38,6 +38,38 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeProfile
         fields = "__all__"
+        read_only_fields = ['user']
+        
+    def validate(self, attrs):
+        if not self.instance:
+            attrs['user'] = self.context['request'].user
+        return attrs
+    
+    def create_or_update_document(self, validated_data, field_name):
+        if field_name in validated_data:
+            document_model = get_document_model()
+            document_instance = document_model.objects.create(file=validated_data[field_name])
+            validated_data[field_name] = document_instance
+
+    def update(self, instance, validated_data):
+        document_fields = [
+            'resume', 'experience_letter', 'police_report', 'medical_report', 'offer_letter',
+            'work_permit', 'project_agreement', 'employment_requirement_agreement', 'visa', 'ticket'
+        ]
+        for field in document_fields:
+            self.create_or_update_document(validated_data, field)
+        
+        return super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        document_fields = [
+            'resume', 'experience_letter', 'police_report', 'medical_report', 'offer_letter',
+            'work_permit', 'project_agreement', 'employment_requirement_agreement', 'visa', 'ticket'
+        ]
+        for field in document_fields:
+            self.create_or_update_document(validated_data, field)
+
+        return super().create(validated_data)
         
 class EmployerProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -45,6 +77,12 @@ class EmployerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployerProfile
         fields = "__all__"
+        read_only_fields = ['user']
+        
+    def validate(self, attrs):
+        if not self.instance:
+            attrs['user'] = self.context['request'].user
+        return attrs
 
 
 
