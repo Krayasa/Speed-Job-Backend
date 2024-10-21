@@ -23,45 +23,50 @@ class UserSerializer(serializers.ModelSerializer):
     
         
 class EmployeeProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    resume = serializers.FileField(use_url=True)
-    experience_letter = serializers.FileField(use_url=True)
-    police_report = serializers.FileField(use_url=True)
-    medical_report = serializers.FileField(use_url=True)
-    offer_letter = serializers.FileField(use_url=True)
-    work_permit = serializers.FileField(use_url=True)
-    project_agreement = serializers.FileField(use_url=True)
-    employment_requirement_agreement = serializers.FileField(use_url=True)
-    visa = serializers.FileField(use_url=True)
-    ticket = serializers.FileField(use_url=True)
-    
+    user = UserSerializer(read_only=True)
+    # Define file fields
+    resume = serializers.FileField(required=False, allow_null=True, use_url=True)
+    experience_letter = serializers.FileField(required=False, allow_null=True, use_url=True)
+    police_report = serializers.FileField(required=False, allow_null=True, use_url=True)
+    medical_report = serializers.FileField(required=False, allow_null=True, use_url=True)
+    offer_letter = serializers.FileField(required=False, allow_null=True, use_url=True)
+    work_permit = serializers.FileField(required=False, allow_null=True, use_url=True)
+    project_agreement = serializers.FileField(required=False, allow_null=True, use_url=True)
+    employment_requirement_agreement = serializers.FileField(required=False, allow_null=True, use_url=True)
+    visa = serializers.FileField(required=False, allow_null=True, use_url=True)
+    ticket = serializers.FileField(required=False, allow_null=True, use_url=True)
+
     class Meta:
         model = EmployeeProfile
         fields = "__all__"
         read_only_fields = ['user']
-        
+
     def validate(self, attrs):
+        # Automatically assign the user if creating a new instance
         if not self.instance:
             attrs['user'] = self.context['request'].user
         return attrs
-    
+
     def create_or_update_document(self, validated_data, field_name):
+        # Create or update the document field if present
         if field_name in validated_data:
             document_model = get_document_model()
             document_instance = document_model.objects.create(file=validated_data[field_name])
             validated_data[field_name] = document_instance
 
     def update(self, instance, validated_data):
+        # Handle updating document fields
         document_fields = [
             'resume', 'experience_letter', 'police_report', 'medical_report', 'offer_letter',
             'work_permit', 'project_agreement', 'employment_requirement_agreement', 'visa', 'ticket'
         ]
         for field in document_fields:
             self.create_or_update_document(validated_data, field)
-        
+
         return super().update(instance, validated_data)
 
     def create(self, validated_data):
+        # Handle creating document fields
         document_fields = [
             'resume', 'experience_letter', 'police_report', 'medical_report', 'offer_letter',
             'work_permit', 'project_agreement', 'employment_requirement_agreement', 'visa', 'ticket'
@@ -70,16 +75,18 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
             self.create_or_update_document(validated_data, field)
 
         return super().create(validated_data)
-        
+
+
 class EmployerProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = EmployerProfile
         fields = "__all__"
         read_only_fields = ['user']
-        
+
     def validate(self, attrs):
+        # Automatically assign the user if creating a new instance
         if not self.instance:
             attrs['user'] = self.context['request'].user
         return attrs

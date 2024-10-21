@@ -142,8 +142,16 @@ class CreateEmployeeProfileAPIView(CreateAPIView):
     serializer_class = EmployeeProfileSerializer
     permission_classes = [IsAuthenticated, IsEmployee]
     parser_classes = [MultiPartParser]
+    
+    def create(self, request, *args, **kwargs):
+        # Allow partial creation
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):
+        # Save the profile with the authenticated user
         serializer.save(user=self.request.user)
 
 # Update Employee Profile
@@ -172,7 +180,18 @@ class RetrieveEmployeeProfileAPIView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsEmployee]
 
     def get_object(self):
-        return EmployeeProfile.objects.get(user=self.request.user)
+        try:
+            return EmployeeProfile.objects.get(user=self.request.user)
+        except EmployeeProfile.DoesNotExist:
+            return None  # Return None if the profile does not exist
+
+    def get(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if profile is None:
+            return Response({"error": "Employee profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(profile)
+        return Response(serializer.data)
 
 # Create Employer Profile
 class CreateEmployerProfileAPIView(CreateAPIView):
@@ -180,7 +199,15 @@ class CreateEmployerProfileAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated, IsEmployer]
     parser_classes = [MultiPartParser]
 
+    def create(self, request, *args, **kwargs):
+        # Allow partial creation
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     def perform_create(self, serializer):
+        # Save the profile with the authenticated user
         serializer.save(user=self.request.user)
 
 # Update Employer Profile
@@ -209,4 +236,15 @@ class RetrieveEmployerProfileAPIView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsEmployer]
 
     def get_object(self):
-        return EmployerProfile.objects.get(user=self.request.user)
+        try:
+            return EmployerProfile.objects.get(user=self.request.user)
+        except EmployerProfile.DoesNotExist:
+            return None  # Return None if the profile does not exist
+
+    def get(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if profile is None:
+            return Response({"error": "Employer profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(profile)
+        return Response(serializer.data)
