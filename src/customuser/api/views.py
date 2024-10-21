@@ -8,14 +8,11 @@ from customuser.models import EmployeeProfile, EmployerProfile
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.parsers import MultiPartParser
 
-# from social_core.backends.oauth import BaseOAuth2
-# from social_core.exceptions import AuthForbidden, AuthTokenError, MissingBackend
-# from social_django.utils import load_backend, load_strategy
 
 from jobs.api.permissions import IsEmployee, IsEmployer
 
 from .custom_claims import MyTokenObtainPairSerializer
-from .serializers import SocialSerializer, UserCreateSerializer, UserSerializer, EmployeeProfileSerializer, EmployerProfileSerializer
+from .serializers import UserCreateSerializer, UserSerializer, EmployeeProfileSerializer, EmployerProfileSerializer
 
 User = get_user_model()
 
@@ -32,7 +29,7 @@ def registration(request):
     return response.Response(res, status.HTTP_201_CREATED)
 
 
-class EditEmployeeProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
+class EditEmployeeProfileAPIView(GenericAPIView):
     serializer_class = EmployeeProfileSerializer
     permission_classes = [IsAuthenticated, IsEmployee]
     parser_classes = [MultiPartParser]
@@ -57,7 +54,7 @@ class EditEmployeeProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
     
 
 
-class EditEmployerProfileAPIView(RetrieveUpdateAPIView, CreateAPIView):
+class EditEmployerProfileAPIView(GenericAPIView):
     serializer_class = EmployerProfileSerializer
     permission_classes = [IsAuthenticated, IsEmployer]
 

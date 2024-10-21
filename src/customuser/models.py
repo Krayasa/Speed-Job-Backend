@@ -38,7 +38,7 @@ class EmployerProfile(models.Model):
     company_description = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.company_name
+        return self.user.email if self.user and self.user.email else "No Email"
 
 class EmployeeProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="employee_profile")

@@ -14,6 +14,9 @@ djangorestframework-simplejwt
 drf-yasg
 django-cors-headers
 django-queryset-csv
-django-allauth[socialaccount]
+# django-allauth[socialaccount]
+drf_social_oauth2
+django-rest-framework-social-oauth2
+django-oauth-toolkit
 wagtail-markdown
 wagtail-content-import

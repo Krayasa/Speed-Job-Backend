@@ -64,12 +64,9 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework.authtoken",
     "rest_framework_simplejwt.token_blacklist",
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    # 'allauth.socialaccount.providers.linkedin',
-    # 'allauth.socialaccount.providers.linkedin_oauth2',
-    'allauth.socialaccount.providers.google',
+    "oauth2_provider",
+    "social_django",
+    "drf_social_oauth2",
     "wagtailmarkdown",
 
     # Project specific apps
@@ -96,6 +93,10 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://speedwings.centralindia.cloudapp.azure.com'
+]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -106,7 +107,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
+    # "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "pipit.urls"
@@ -132,6 +133,8 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "wagtail.contrib.settings.context_processors.settings",
+                "social_django.context_processors.backends",
+                "social_django.context_processors.login_redirect",
 
                 # Project specific
                 "pipit.context_processors.settings_context_processor",
@@ -139,6 +142,9 @@ TEMPLATES = [
         },
     }
 ]
+
+
+
 
 
 
@@ -163,6 +169,8 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # 'rest_framework.authentication.TokenAuthentication',
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",  # django-oauth-toolkit >= 1.0.0
+        "drf_social_oauth2.authentication.SocialAuthentication",
     ),
     # "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "EXCEPTION_HANDLER": "jobs.api.custom_exception.custom_exception_handler",
@@ -195,16 +203,11 @@ SWAGGER_SETTINGS = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    # "social_core.backends.github.GithubOAuth2",
-    # "social_core.backends.twitter.TwitterOAuth",
-    # "social_core.backends.facebook.FacebookOAuth2",
-    # "social_core.backends.linkedin.LinkedinOAuth2",
-    # "social_core.backends.google.GoogleOAuth2",
-    # "graphql_jwt.backends.JSONWebTokenBackend",
-    # 'social_core.backends.google.GoogleOAuth2',
-
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "drf_social_oauth2.backends.DjangoOAuth2",
+    "django.contrib.auth.backends.ModelBackend",
+    "social_core.backends.facebook.FacebookAppOAuth2",
+    "social_core.backends.facebook.FacebookOAuth2",
+    "social_core.backends.google.GoogleOAuth2",
 )
 
 # Default primary key field type
@@ -229,43 +232,6 @@ SITE_ID = 1  # new
 
 ACCOUNT_EMAIL_VERIFICATION = "none"  # new
 
-# LOGIN_REDIRECT_URL = "/"  # new
-
-SOCIALACCOUNT_PROVIDERS = {
-    # 'facebook': {
-    #     'METHOD': 'oauth2',
-    #     'SCOPE': ['email', 'public_profile', 'user_friends'],
-    #     'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-    #     'INIT_PARAMS': {'cookie': True},
-    #     'FIELDS': [
-    #         'id',
-    #         'email',
-    #         'name',
-    #         'first_name',
-    #         'last_name',
-    #         'verified',
-    #         'locale',
-    #         'timezone',
-    #         'link',
-    #         'gender',
-    #         'updated_time',
-    #     ],
-    #     'EXCHANGE_TOKEN': True,
-    #     'LOCALE_FUNC': 'path.to.callable',
-    #     'VERIFIED_EMAIL': False,
-    #     'VERSION': 'v2.12',
-    # },
-     'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -281,6 +247,7 @@ DEFAULT_FROM_EMAIL = get_env("DEFAULT_FROM_EMAIL", default="noreply@example.com"
 
 # Auth
 AUTH_USER_MODEL = "customuser.User"
+LOGIN_URL = "/admin/login/"
 
 # Wagtail
 WAGTAIL_SITE_NAME = "Company-Project"
