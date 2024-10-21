@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, login
 from requests.exceptions import HTTPError
 from rest_framework import decorators, permissions, response, status
-from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView, CreateAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from customuser.models import EmployeeProfile, EmployerProfile
@@ -29,54 +29,57 @@ def registration(request):
     return response.Response(res, status.HTTP_201_CREATED)
 
 
-class EditEmployeeProfileAPIView(GenericAPIView):
-    serializer_class = EmployeeProfileSerializer
-    permission_classes = [IsAuthenticated, IsEmployee]
-    parser_classes = [MultiPartParser]
+# class EditEmployeeProfileAPIView(GenericAPIView):
+#     serializer_class = EmployeeProfileSerializer
+#     permission_classes = [IsAuthenticated, IsEmployee]
+#     parser_classes = [MultiPartParser]
+#     http_method_names = ['patch', 'put', 'get','post']
 
-    def get_object(self):
-        profile, created = EmployeeProfile.objects.get_or_create(user=self.request.user)
-        return profile
+#     def get_object(self):
+#         profile, created = EmployeeProfile.objects.get_or_create(user=self.request.user)
+#         return profile
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
 
-    def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
+#     def perform_update(self, serializer):
+#         serializer.save(user=self.request.user)
         
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', True)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
+#     def update(self, request, *args, **kwargs):
+#         partial = kwargs.pop('partial', True)
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance, data=request.data, partial=partial)
+#         serializer.is_valid(raise_exception=True)
+#         self.perform_update(serializer)
+#         return Response(serializer.data)
     
 
 
-class EditEmployerProfileAPIView(GenericAPIView):
-    serializer_class = EmployerProfileSerializer
-    permission_classes = [IsAuthenticated, IsEmployer]
+# class EditEmployerProfileAPIView(GenericAPIView):
+#     serializer_class = EmployerProfileSerializer
+#     permission_classes = [IsAuthenticated, IsEmployer]
+#     http_method_names = ['patch', 'put', 'get','post']
 
-    def get_object(self):
-        profile, created = EmployerProfile.objects.get_or_create(user=self.request.user)
-        return profile
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+#     def get_object(self):
+#         profile, created = EmployerProfile.objects.get_or_create(user=self.request.user)
+#         return profile
 
-    def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
+
+#     def perform_update(self, serializer):
+#         serializer.save(user=self.request.user)
         
     
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', True)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        print(serializer)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data)
+#     def update(self, request, *args, **kwargs):
+#         partial = kwargs.pop('partial', True)
+#         instance = self.get_object()
+#         serializer = self.get_serializer(instance, data=request.data, partial=partial)
+#         print(serializer)
+#         serializer.is_valid(raise_exception=True)
+#         self.perform_update(serializer)
+#         return Response(serializer.data)
         
 
 # class SocialLoginAPIView(GenericAPIView):
@@ -133,3 +136,77 @@ class EditEmployerProfileAPIView(GenericAPIView):
 #             }
 
 #             return Response(status=status.HTTP_200_OK, data=context)
+
+# Create Employee Profile
+class CreateEmployeeProfileAPIView(CreateAPIView):
+    serializer_class = EmployeeProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployee]
+    parser_classes = [MultiPartParser]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Update Employee Profile
+class UpdateEmployeeProfileAPIView(UpdateAPIView):
+    serializer_class = EmployeeProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployee]
+    parser_classes = [MultiPartParser]
+
+    def get_object(self):
+        return EmployeeProfile.objects.get(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Delete Employee Profile
+class DeleteEmployeeProfileAPIView(DestroyAPIView):
+    serializer_class = EmployeeProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployee]
+
+    def get_object(self):
+        return EmployeeProfile.objects.get(user=self.request.user)
+
+# Retrieve Employee Profile
+class RetrieveEmployeeProfileAPIView(RetrieveAPIView):
+    serializer_class = EmployeeProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployee]
+
+    def get_object(self):
+        return EmployeeProfile.objects.get(user=self.request.user)
+
+# Create Employer Profile
+class CreateEmployerProfileAPIView(CreateAPIView):
+    serializer_class = EmployerProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployer]
+    parser_classes = [MultiPartParser]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Update Employer Profile
+class UpdateEmployerProfileAPIView(UpdateAPIView):
+    serializer_class = EmployerProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployer]
+    parser_classes = [MultiPartParser]
+
+    def get_object(self):
+        return EmployerProfile.objects.get(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Delete Employer Profile
+class DeleteEmployerProfileAPIView(DestroyAPIView):
+    serializer_class = EmployerProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployer]
+
+    def get_object(self):
+        return EmployerProfile.objects.get(user=self.request.user)
+
+# Retrieve Employer Profile
+class RetrieveEmployerProfileAPIView(RetrieveAPIView):
+    serializer_class = EmployerProfileSerializer
+    permission_classes = [IsAuthenticated, IsEmployer]
+
+    def get_object(self):
+        return EmployerProfile.objects.get(user=self.request.user)
