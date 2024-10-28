@@ -11,7 +11,8 @@ from taggit.managers import TaggableManager
 from .manager import JobManager
 
 JOB_TYPE = (("FullTime", "Full time"), ("PartTime", "Part time"), ("Contract", "Contract"))
-
+ALLOWANCE = (("Yes", "Yes"), ("No", "No"))
+GENDER = (("Male", "Male"), ("Female", "Female"), ("Any", "Any"))
 
 class Job(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -26,7 +27,14 @@ class Job(models.Model):
     website = models.CharField(max_length=100, default="")
     created_at = models.DateTimeField(default=timezone.now)
     filled = models.BooleanField(default=False)
-    salary = models.IntegerField(default=0, blank=True)
+    salary = models.CharField(blank=True, default="")
+    food_allowance = models.CharField(choices=ALLOWANCE, max_length=10, null=True, blank=True)
+    accommodation = models.CharField(choices=ALLOWANCE, max_length=10, null=True, blank=True)
+    gender = models.CharField(choices=GENDER, max_length=10, null=True, blank=True)
+    working_hours = models.CharField(max_length=100, null=True, blank=True)
+    working_days = models.CharField(max_length=100, null=True, blank=True)
+    language = models.CharField(max_length=200, null=True, blank=True)
+    experience = models.CharField(max_length=200, null=True, blank=True)
     tags = TaggableManager()
     vacancy = models.IntegerField(default=1)
     job_offer_letter = models.ForeignKey(get_document_model(), on_delete=models.SET_NULL, null=True, blank=True, related_name="job_offer_letter")
