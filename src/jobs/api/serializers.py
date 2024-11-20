@@ -111,7 +111,6 @@ class JobSerializer(serializers.ModelSerializer):
     job_project_agreement = serializers.FileField(use_url=True)
     job_employment_requirement_agreement = serializers.FileField(use_url=True)
     # job_tags = serializers.SerializerMethodField()
-    applicants = ApplicantSerializer(many=True, read_only=True)
 
     class Meta:
         model = Job
@@ -123,6 +122,7 @@ class JobSerializer(serializers.ModelSerializer):
 
 class DashboardJobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    applicants = ApplicantSerializer(many=True, read_only=True)
     job_offer_letter = serializers.FileField(use_url=True)
     job_work_permit = serializers.FileField(use_url=True)
     job_project_agreement = serializers.FileField(use_url=True)
