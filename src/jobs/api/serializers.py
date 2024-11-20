@@ -3,8 +3,7 @@ from wagtail.documents import get_document_model
 
 from customuser.api.serializers import UserSerializer
 # from tags.api.serializers import TagSerializer
-
-from ..models import *
+from jobs.models import Job, Applicant
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -87,7 +86,24 @@ from rest_framework.pagination import PageNumberPagination
 #         user = self.context.get("request", None).user
 #         return ApplicantSerializer(Applicant.objects.get(user=user, job=obj)).data
 
+class ApplicantSerializer(serializers.ModelSerializer):
+    applied_user = serializers.SerializerMethodField()
+    job = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
+    class Meta:
+        model = Applicant
+        fields = ("id", "job", "applied_user", "status", "created_at", "comment")
+
+    def get_status(self, obj):
+        return obj.get_status
+
+    def get_job(self, obj):
+        return JobSerializer(obj.job).data
+
+    def get_applied_user(self, obj):
+        return UserSerializer(obj.user).data
+    
 class JobSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     job_offer_letter = serializers.FileField(use_url=True)
@@ -95,6 +111,7 @@ class JobSerializer(serializers.ModelSerializer):
     job_project_agreement = serializers.FileField(use_url=True)
     job_employment_requirement_agreement = serializers.FileField(use_url=True)
     # job_tags = serializers.SerializerMethodField()
+    applicants = ApplicantSerializer(many=True, read_only=True)
 
     class Meta:
         model = Job
@@ -167,23 +184,7 @@ class ApplyJobSerializer(serializers.ModelSerializer):
         fields = ("job",)
 
 
-class ApplicantSerializer(serializers.ModelSerializer):
-    applied_user = serializers.SerializerMethodField()
-    job = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Applicant
-        fields = ("id", "job", "applied_user", "status", "created_at", "comment")
-
-    def get_status(self, obj):
-        return obj.get_status
-
-    def get_job(self, obj):
-        return JobSerializer(obj.job).data
-
-    def get_applied_user(self, obj):
-        return UserSerializer(obj.user).data
 
 
 class AppliedJobSerializer(serializers.ModelSerializer):
