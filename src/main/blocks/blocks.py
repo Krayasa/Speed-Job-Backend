@@ -15,11 +15,11 @@ from wagtail.blocks import (
     StreamBlock,
     PageChooserBlock,
     RichTextBlock,
-
 )
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.api import APIField
-
+from jobs.models import Job
+from wagtail.snippets.blocks import SnippetChooserBlock
 
 # class BaseStreamBlock(StreamBlock):
 #      """
@@ -28,25 +28,40 @@ from wagtail.api import APIField
 #      my_heading_block = CharBlock()
 #      my_paragraph_block = RichTextBlock()
 #      my_image_block = ImageChooserBlock()
-    #  my_table_block = TableBlock()
+#  my_table_block = TableBlock()
+
 
 class APIImageChooserBlock(ImageChooserBlock):
     def get_api_representation(self, value, context=None):
         if value:
             return {
-                'id': value.id,
-                'url': value.file.url,
-                'width': value.width,
-                'height': value.height,
+                "id": value.id,
+                "url": value.file.url,
+                "width": value.width,
+                "height": value.height,
             }
-            
+
+
 class APIPageChooserBlock(PageChooserBlock):
     def get_api_representation(self, value, context=None):
         if value:
             return {
-                'id': value.id,
-                'title': value.title,
-                'url': value.url,
+                "id": value.id,
+                "title": value.title,
+                "url": value.url,
+            }
+            
+class APIJobSnippetChooserBlock(ImageChooserBlock):
+    def get_api_representation(self, value, context=None):
+        if value:
+            return {
+                "id": value.id,
+                "title": value.title,
+                "company_name": value.company_name,
+                "location": value.location,              
+                "category": value.category,
+                "type": value.type,
+                "salary": value.salary,
             }
 
 
@@ -85,16 +100,13 @@ class ButtonBlock(StructBlock):
     link = URLBlock(required=False, label="Link", default="www.speedwingshr.com")
     page = APIPageChooserBlock(required=False)
     btntype = ChoiceBlock(
-        required=False,
-        choices=[
-            ("primary", "Primary"),
-            ("secondary", "Secondary")
-        ]
+        required=False, choices=[("primary", "Primary"), ("secondary", "Secondary")]
     )
+
     def clean(self, value):
         cleaned_data = super().clean(value)
-        link = cleaned_data.get('link')
-        page = cleaned_data.get('page')
+        link = cleaned_data.get("link")
+        page = cleaned_data.get("page")
 
         if not link and not page:
             raise ValidationError('Either "Link" or "Page" must be provided.')
@@ -119,8 +131,7 @@ class HeroSection(StructBlock):
     )
     image = APIImageChooserBlock(required=False, label="Hero image")
 
-
-    button=ButtonBlock(required=False,label="CTA")
+    button = ButtonBlock(required=False, label="CTA")
     hash = HashBlock(
         required=False,
         max_length=80,
@@ -133,6 +144,24 @@ class HeroSection(StructBlock):
         label = "Hero Section"
 
 
+class JobSection(StructBlock):
+    heading = TextBlock(
+        required=False,
+        label="Job Section title",
+        default="Manpower Service from a ISO Certified Recruitment Agency",
+    )
+
+    description = TextBlock(
+        required=False,
+        label="Hero subtitle",
+        default="The thing we do is to get you a right job",
+    )
+    jobs = ListBlock(APIJobSnippetChooserBlock(Job))
+    
+    class Meta:
+        icon = "placeholder"
+        label = "Jobs Section"
+
 class TeamMemberBlock(StructBlock):
     name = CharBlock(required=True, max_length=255, label="Name")
     image = APIImageChooserBlock(required=False, label="Photo")
@@ -140,7 +169,6 @@ class TeamMemberBlock(StructBlock):
     biography = TextBlock(required=False, label="Bio")
     linkedin = URLBlock(required=False, label="LinkedIn Page")
     twitter = URLBlock(required=False, label="Twitter Page")
-
 
     class Meta:
         icon = "user"
@@ -158,14 +186,13 @@ class TeamSection(StructBlock):
         label="Description",
         default="Here is a list of our Head Peeps. They look glorious rendered in HTML but are probably just normal, mortal humans.",
     )
-    members = ListBlock(TeamMemberBlock(),required=False,label="Team Members")
+    members = ListBlock(TeamMemberBlock(), required=False, label="Team Members")
     hash = HashBlock(
         required=False,
         max_length=80,
         label="Hash",
         help_text="Allow navigation to this section within a page. e.g. 'team' allows navigation to /http://your-site.com/#team",
     )
-
 
     class Meta:
         icon = "group"
@@ -175,16 +202,16 @@ class TeamSection(StructBlock):
 class CarouselImageBlock(StructBlock):
     image = APIImageChooserBlock()
     heading = TextBlock(
-            required=False,
-            label="Main text",
-            help_text="Add an image subtitle",
-        )
+        required=False,
+        label="Main text",
+        help_text="Add an image subtitle",
+    )
 
-    description =TextBlock(
-            required=False,
-            label="Description",
-            help_text="Add some descriptive information with your image",
-        )
+    description = TextBlock(
+        required=False,
+        label="Description",
+        help_text="Add some descriptive information with your image",
+    )
 
     class Meta:
         icon = "image"
@@ -193,10 +220,10 @@ class CarouselImageBlock(StructBlock):
 
 class CarouselSection(StructBlock):
     heading = TextBlock(
-            required=False,
-            label="Heading",
-            help_text="Add a heading at the beginning of this page section",
-        )
+        required=False,
+        label="Heading",
+        help_text="Add a heading at the beginning of this page section",
+    )
     description = TextBlock(
         required=False,
         label="Description",
@@ -238,11 +265,11 @@ class FaqBlock(StructBlock):
 
 
 class FaqSection(StructBlock):
-    heading =TextBlock(
-            required=False,
-            label="Heading",
-            help_text="Add a heading at the beginning of this page section",
-        )
+    heading = TextBlock(
+        required=False,
+        label="Heading",
+        help_text="Add a heading at the beginning of this page section",
+    )
     description = TextBlock(required=False, label="Description")
     hash = HashBlock(
         required=False,
@@ -304,7 +331,6 @@ class TestimonialBlock(StructBlock):
         label = "Testimonial"
 
 
-
 class TestimonialSection(StructBlock):
     heading = TextBlock(
         required=False,
@@ -330,7 +356,6 @@ class TestimonialSection(StructBlock):
         label = "Testimonials Section"
 
 
-
 class FeatureBlock(StructBlock):
     heading = TextBlock(
         required=True,
@@ -342,22 +367,21 @@ class FeatureBlock(StructBlock):
         label="Description",
         help_text="Write a few lines about this feature",
     )
-    image=APIImageChooserBlock(required=False)
-    button=ButtonBlock(required=False)
+    image = APIImageChooserBlock(required=False)
+    button = ButtonBlock(required=False)
 
     class Meta:
         icon = "tick-inverse"
         label = "Product Feature Description"
 
 
-
 class FeatureRowSection(StructBlock):
-    heading =TextBlock(
-            required=False,
-            label="Heading",
-            default="Why our product is best",
-            help_text="Add a heading at the beginning of this page section",
-        )
+    heading = TextBlock(
+        required=False,
+        label="Heading",
+        default="Why our product is best",
+        help_text="Add a heading at the beginning of this page section",
+    )
     description = TextBlock(
         required=False,
         label="Description",
@@ -387,12 +411,12 @@ class FeatureRowSection(StructBlock):
 
 
 class FeatureSection(StructBlock):
-    heading =TextBlock(
-            required=False,
-            label="Heading",
-            default="Why our product is best",
-            help_text="Add a heading at the beginning of this page section",
-        )
+    heading = TextBlock(
+        required=False,
+        label="Heading",
+        default="Why our product is best",
+        help_text="Add a heading at the beginning of this page section",
+    )
 
     features = ListBlock(FeatureBlock(), label="Features")
     hash = HashBlock(
@@ -405,7 +429,6 @@ class FeatureSection(StructBlock):
     class Meta:
         icon = "list-ul"
         label = "Brand Features Section"
-
 
 
 class LogoCloudBlock(StructBlock):
@@ -427,7 +450,6 @@ class LogoCloudBlock(StructBlock):
         label = "Logos"
 
 
-
 class LogoCloudSection(StructBlock):
     description = TextBlock(
         required=False,
@@ -436,7 +458,7 @@ class LogoCloudSection(StructBlock):
         help_text="Add a description",
     )
 
-    countries = ListBlock(LogoCloudBlock(), label = "Countries")
+    countries = ListBlock(LogoCloudBlock(), label="Countries")
 
     class Meta:
         icon = "pick"
@@ -463,14 +485,13 @@ class ArticleSection(StructBlock):
         label = "Article Section"
 
 
-
 class ContactSection(StructBlock):
-    heading =TextBlock(
-            required=False,
-            label="Heading",
-            default="Ready To Take The Next Step?",
-            help_text="Add a heading at the beginning of this page section",
-        )
+    heading = TextBlock(
+        required=False,
+        label="Heading",
+        default="Ready To Take The Next Step?",
+        help_text="Add a heading at the beginning of this page section",
+    )
     description = TextBlock(
         required=False,
         label="Description",
@@ -496,21 +517,20 @@ class ContactSection(StructBlock):
         label="Email",
         help_text="Write email",
     )
-    button=ButtonBlock(required=False)
+    button = ButtonBlock(required=False)
 
     class Meta:
         icon = "user"
         label = "Contact Section"
 
 
-
 class JobFormSection(StructBlock):
-    heading =TextBlock(
-            required=False,
-            label="Title",
-            default="Job Title",
-            help_text="Add a title for the job",
-        )
+    heading = TextBlock(
+        required=False,
+        label="Title",
+        default="Job Title",
+        help_text="Add a title for the job",
+    )
     description = TextBlock(
         required=False,
         label="Description",
@@ -522,5 +542,3 @@ class JobFormSection(StructBlock):
     class Meta:
         icon = "user"
         label = "Job Form Section"
-        
-
